@@ -2,8 +2,11 @@ function changeText() {
     var button = document.getElementById("demo");
     if (button.innerHTML === "Night") {
         button.innerHTML = "Day";
+        button.style.backgroundColor = "orangered";
+        button.style.color = "black";
          let root = document.documentElement;
          let sky = document.querySelector('.sky');
+         
           root.style.setProperty('--building-color1', '#000');
     root.style.setProperty('--building-color2', '#000');
     root.style.setProperty('--building-color3', '#000');
@@ -15,6 +18,8 @@ function changeText() {
     sky.style.background = 'radial-gradient(closest-corner circle at 15% 15%, #ccc, #ccc 20%, #445 21%, #223 100%)';
     } else {
         button.innerHTML = "Night";
+        button.style.backgroundColor = "blue";
+        button.style.color = "yellow";
         let root = document.documentElement;
         let sky = document.querySelector('.sky');
         sky.style.background = 'radial-gradient(closest-corner circle at 15% 15%, #ffcf33, #ffcf33 20%, #ffff66 21%,#bbeeff 100%)';
