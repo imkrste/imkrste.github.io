@@ -163,6 +163,7 @@
   
   .shirt {
     font: bold 15px Helvetica, sans-serif;
+    text-align: center;
     top: 190px;
     left: 127.5px;
     z-index: 1;
@@ -171,7 +172,6 @@
   
   .shirt div {
     font-weight:  initial;
-    top: 22.5px;
     bottom: 2px;
     left: 12px;
   }
