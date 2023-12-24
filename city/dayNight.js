@@ -1,7 +1,7 @@
 function changeText() {
     var button = document.getElementById("demo");
-    if (button.innerHTML === "Night") {
-        button.innerHTML = "Day";
+    if (button.innerHTML === "NIGHT") {
+        button.innerHTML = "DAY";
         button.style.backgroundColor = "orangered";
         button.style.color = "black";
          let root = document.documentElement;
@@ -17,7 +17,7 @@ function changeText() {
     root.style.setProperty('--window-color4', '#777');
     sky.style.background = 'radial-gradient(closest-corner circle at 15% 15%, #ccc, #ccc 20%, #445 21%, #223 100%)';
     } else {
-        button.innerHTML = "Night";
+        button.innerHTML = "NIGHT";
         button.style.backgroundColor = "blue";
         button.style.color = "yellow";
         let root = document.documentElement;
