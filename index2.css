@@ -1,0 +1,232 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  background-color: black;
+  color: #02D7F2;
+  font-family: 'Chakra Petch';
+}
+
+a {
+  text-decoration: none;
+}
+header {
+ border: solid;
+}
+
+nav a {
+  color: #02D7F2;
+  float: right;
+  display: block;  
+  text-align: center;
+  text-decoration: none;
+  font-size: 17px; 
+ }
+
+#navbar ul {
+list-style-type: none; 
+margin: 0;
+padding: 10px;
+overflow: hidden;
+ 
+}
+
+#navbar li {
+ border: solid;
+  margin: 5px;
+  padding: 5px 10px;  
+}
+
+#navbar li:hover {
+  box-shadow: 1px 1px 7px #02D7F2;
+}
+
+#navbar p {
+  display: block;
+  float: left;
+  position: absolute;
+  padding-top: 7px;
+  padding-left: 15px;
+}
+
+
+#welcome-section {
+  margin: 0 auto;  
+}
+
+
+h1 {
+  text-align: center;
+  font-size: 4rem;
+  color: #02D7F2; 
+}
+
+#welcome-section p {
+  text-align: center;
+  margin: 50px;  
+}
+
+.card-container {
+  margin: 0 auto;
+  display: grid;
+  gap: 10px;
+  max-width: 1070px;
+  grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  justify-items: center;
+}
+
+.card-big {
+  position: relative;
+  grid-row: 1 / span 2;
+  background-color:  #02D7F2;
+  color: black;
+  width: 350px;
+  height: 400px;
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%, 0 10%);
+}
+
+
+.card-big hr {
+  border: 2px solid black;
+  width: 15%;
+  float: left;
+  margin: 18% 0 0% 14%;
+}
+
+.card-big .big-date {
+  float: right;
+}
+
+.card-title p {
+  margin-top: 10px;
+  float: left;
+}
+
+.bigcard-description {
+  position: absolute;
+  bottom: 0;
+}
+
+.card-small {
+  width: 350px;
+  height: 190px;
+  border: solid;
+  position: relative;
+}
+
+.card-small .small-date {
+  float: right;
+}
+
+.card-small hr {
+  border: 2px solid #02D7F2;
+  width: 15%;
+  float: left;
+  margin: 20% 0 0% 14%;
+}
+
+.smallcard-description {
+  position: absolute;
+  color: red;
+}
+
+#projects {
+  padding: 50px 0 50px 0;
+  width: 100%;
+}
+
+#projects-tittle {
+  position: relative;
+  margin: 0 auto;
+  width: 200px;
+  margin-bottom: 40px;
+  text-align: center;  
+}
+
+#projects-container {
+  position: relative;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-rows: repeat(auto-fit, minmax(190px, 1fr));
+  grid-gap: 10px;
+  justify-items: center;
+  max-width: 1070px;
+  margin-bottom: 50px;
+}
+
+.project-tile {
+  border: solid;
+  background-color: black;
+  width: 350px;
+  height: 190px;  
+}
+
+figure {
+  
+ }
+
+.project-tile img {
+  opacity: 20%;
+  margin-top: 20px;
+  border: 2px solid #02D7F2;
+  width: 180px;
+  clip-path: polygon(5% 0, 100% 0, 100% 100%, 0 100%, 0 10%);
+  
+}
+
+figcaption {
+  color: #02D7F2;
+}
+
+#projects-container a:hover {
+  
+}
+
+.btn-more {
+ margin: 0 auto;
+ position: relative;
+ border: 1px solid #02D7F2;
+ background-color: black;
+ color: #02D7F2;
+ width: 10rem;
+ height: 2rem;
+}
+
+
+.btn-more:hover {
+ 
+}
+
+.btn-more a {
+  color: #02D7F2;
+}
+
+
+
+.btn-more a:hover {
+
+}
+
+.contact {
+
+}
+
+.contact h2 {
+  
+}
+
+.contact .btn {
+ 
+}
+
+.contact a {
+ 
+}
+
+.contact a:hover {
+ 
+}
