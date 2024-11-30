@@ -2,7 +2,8 @@ const numberInput = document.getElementById("number");
 const convertBtn = document.getElementById("convert-btn");
 const output = document.getElementById("output");
 
-const checkUserInput = () => {    
+const checkUserInput = () => {
+  event.preventDefault();    
   let inputInt = parseInt(numberInput.value);
   const romanNumerals = [
     { value: 1000, symbol: 'M' },
@@ -40,8 +41,6 @@ const checkUserInput = () => {
 
   output.innerText = result;
 };
-
-
   
   convertBtn.addEventListener("click", checkUserInput);
   
