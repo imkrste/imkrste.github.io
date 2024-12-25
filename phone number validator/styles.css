@@ -1,0 +1,108 @@
+:root {
+    --light-grey: #f5f6f7;
+    --dark-blue: #0a0a23;
+    --fcc-blue: #1b1b32;
+    --light-yellow: #fecc4c;
+    --dark-yellow: #feac32;
+    --light-pink: #ffadad;
+    --dark-red: #850000;
+    --light-green: #acd157;
+    --neon-cyan: #02d7f2;
+  }
+
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Lato", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    color: var(--neon-cyan);
+    background-color: black;
+  }
+
+h1 {
+    text-align: center;
+}
+
+.phone-container {    
+    display: flex; 
+    flex-direction: column; 
+     
+    border: 1px solid var(--neon-cyan);
+    margin: 0 auto;
+    max-width: 300px;
+    padding: 10px;
+    height: 510px;
+}
+
+label {
+    padding-top: 60px;
+    margin: 0 auto;
+    color: black;
+    padding-bottom: 10px;
+}
+
+input {
+    width: 90%;
+    height: 50px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+#results-div {
+    margin-top: 10px;;
+    height: 40%;
+    color: black;
+    padding-top: 40px;
+    text-align: center;
+    font-size: larger;
+}
+.phone-camera {
+    background-image: repeating-linear-gradient(
+        to right, 
+        var(--neon-cyan) 0,
+        var(--neon-cyan) 12px,
+        black 10px,
+        black 20px
+
+        );
+    margin: 0 auto 5px auto;
+    background-color: #02d7f2;
+    width: 74px;
+    height: 15px;
+}
+
+.phone-background {
+    display: flex; 
+    flex-direction: column; 
+   background-color: #02d7f2;
+    margin-top: 20px;
+    height: 80%
+}
+
+.phone-footer {
+    margin: auto auto 0 auto;
+    
+}
+
+button {
+    background-color: #0a0a23;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    width: 100px;
+    height: 30px;
+    margin: 5px auto 10px auto;
+}
+
+button:hover {
+    color:#0a0a23;
+    background-color: #02d7f2;
+    cursor:pointer;
+}
+
+button:active {
+    border: 1px solid white;
+    
+}
