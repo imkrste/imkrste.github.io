@@ -238,4 +238,54 @@
         direction = { x: 0, y: 1 };
         break;
       case 'ArrowLeft':
-        if (direction.x ===
+        if (direction.x === 1) break;
+        direction = { x: -1, y: 0 };
+        break;
+      case 'ArrowRight':
+        if (direction.x === -1) break;
+        direction = { x: 1, y: 0 };
+        break;
+    }
+  });
+
+  // Mobile controls
+  document.getElementById('up').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.y !== 1) direction = { x: 0, y: -1 };
+  });
+  document.getElementById('down').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.y !== -1) direction = { x: 0, y: 1 };
+  });
+  document.getElementById('left').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.x !== 1) direction = { x: -1, y: 0 };
+  });
+  document.getElementById('right').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.x !== -1) direction = { x: 1, y: 0 };
+  });
+  
+  // Also add click events for desktop testing
+  document.getElementById('up').addEventListener('click', () => {
+    if (direction.y !== 1) direction = { x: 0, y: -1 };
+  });
+  document.getElementById('down').addEventListener('click', () => {
+    if (direction.y !== -1) direction = { x: 0, y: 1 };
+  });
+  document.getElementById('left').addEventListener('click', () => {
+    if (direction.x !== 1) direction = { x: -1, y: 0 };
+  });
+  document.getElementById('right').addEventListener('click', () => {
+    if (direction.x !== -1) direction = { x: 1, y: 0 };
+  });
+
+  createGrid();
+  resetGame();
+  setInterval(() => {
+    moveSnake();
+    draw();
+  }, 300);
+</script>
+</body>
+</html>
