@@ -1,30 +1,26 @@
 <!DOCTYPE html>
-<html lang="mk">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Platformer Game</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Platformer Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="start-screen">
-    <h1 class="main-title">Помогнете и на Ивона да лапне што повеќе куриња</h1>
-    <p class="instructions">Контролирајте ја ивона со стрелките<br />СПЕЈС или средното копче за скок.</p>
-    <div class="btn-container">
-      <button class="btn" id="start-btn" disabled>Start</button>
+    <div class="start-screen">
+        <h1 class="main-title">Помогнете и на Ивона да лапне што повеќе куриња</h1>
+        <p class="instructions">
+            Контролирајте ја ивона со стрелките<br>
+            СПЕЈС за скок.
+        </p>
+        <div class="btn-container">
+            <button class="btn" id="start-btn">Start</button>
+        </div>
     </div>
-  </div>
-  <canvas id="canvas"></canvas>
-  <div class="checkpoint-screen">
-    <p></p>
-    <button class="btn restart-btn" id="restart-btn" style="display:none;">New Game</button>
-  </div>
-  <!-- Mobile controls -->
-  <div class="mobile-controls" id="mobile-controls">
-    <button class="control-btn" id="left-btn">&#8592;</button>
-    <button class="control-btn" id="jump-btn">&#8679;</button>
-    <button class="control-btn" id="right-btn">&#8594;</button>
-  </div>
-  <script src="script.js"></script>
+    <div class="checkpoint-screen">
+        <p>Лапнавте куре!</p>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="script.js"></script>
 </body>
 </html>
