@@ -318,6 +318,7 @@ const movePlayer = (key, xVelocity, isPressed) => {
 const startGame = () => {
   canvas.style.display = "block";
   startScreen.style.display = "none";
+  setupMobileControls();
   animate();
 }
 
@@ -338,3 +339,39 @@ window.addEventListener("keydown", ({ key }) => {
 window.addEventListener("keyup", ({ key }) => {
   movePlayer(key, 0, false);
 });
+
+// Add touch event listeners for mobile controls
+function setupMobileControls() {
+  const leftBtn = document.getElementById("left-btn");
+  const rightBtn = document.getElementById("right-btn");
+  const jumpBtn = document.getElementById("jump-btn");
+
+  // Left button
+  leftBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent default behavior
+    movePlayer("ArrowLeft", 8, true);
+  });
+
+  leftBtn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    movePlayer("ArrowLeft", 0, false);
+  });
+
+  // Right button
+  rightBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    movePlayer("ArrowRight", 8, true);
+  });
+
+  rightBtn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    movePlayer("ArrowRight", 0, false);
+  });
+
+  // Jump button
+  jumpBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    movePlayer("ArrowUp", 8, true);
+  });
+}
+
