@@ -197,7 +197,7 @@
     // Check collision with self
     for (let i = 0; i < snakeCoords.length; i++) {
       if (snakeCoords[i].x === newHead.x && snakeCoords[i].y === newHead.y) {
-        alert('Game Over! Your score: ' + score);
+        alert('ИГРАТА ЗАВРШИ! СОБРАВТЕ ' + score + 'КУРОВИ');
         resetGame();
         return;
       }
