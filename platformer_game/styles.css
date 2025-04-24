@@ -77,20 +77,6 @@
   #canvas {
     display: none;
   }
-
-  html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-  }
-  
-  #canvas {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    touch-action: none; /* Prevent scrolling when touching the canvas */
-  }
-  
   
   @media (min-width: 768px) {
     .start-screen {
