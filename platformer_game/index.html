@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Platformer Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="start-screen">
         <h1 class="main-title">Помогнете и на Ивона да лапне што повеќе куриња</h1>
         <p class="instructions">
             Контролирајте ја ивона со стрелките<br>
-            СПЕЈС за скок.<br>
-            На мобилен уред, користете ги копчињата на екранот.
+            СПЕЈС за скок.
         </p>
         <div class="btn-container">
             <button class="btn" id="start-btn">СТАРТ</button>
@@ -22,11 +21,11 @@
         <p>Лапнавте куре!</p>
     </div>
     <canvas id="canvas"></canvas>
-    <div id="mobile-controls">
-        <button id="left-btn" class="control-btn">←</button>
-        <button id="jump-btn" class="control-btn">↑</button>
-        <button id="right-btn" class="control-btn">→</button>
-    </div>
     <script src="script.js"></script>
+    <div id="mobile-controls">
+      <button id="left-btn">◀️</button>
+      <button id="jump-btn">⭮</button>
+      <button id="right-btn">▶️</button>
+    </div>
 </body>
 </html>

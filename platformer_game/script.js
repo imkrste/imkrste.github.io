@@ -28,6 +28,16 @@ Object.values(images).forEach(img => {
   img.addEventListener('load', imageLoaded);
 });
 
+// Show mobile controls if on a touch device
+if ('ontouchstart' in window) {
+  document.getElementById('mobile-controls').style.display = 'flex';
+}
+
+
+const leftBtn = document.getElementById('left-btn');
+const rightBtn = document.getElementById('right-btn');
+const jumpBtn = document.getElementById('jump-btn');
+
 const startBtn = document.getElementById("start-btn");
 const canvas = document.getElementById("canvas");
 const startScreen = document.querySelector(".start-screen");
@@ -316,6 +326,7 @@ const movePlayer = (key, xVelocity, isPressed) => {
   }
 }
 
+
 const startGame = () => {
   canvas.style.display = "block";
   startScreen.style.display = "none";
@@ -340,3 +351,11 @@ window.addEventListener("keyup", ({ key }) => {
   movePlayer(key, 0, false);
 });
 
+// Movement: left and right
+leftBtn.addEventListener('touchstart', () => movePlayer('ArrowLeft', 8, true));
+leftBtn.addEventListener('touchend', () => movePlayer('ArrowLeft', 0, false));
+rightBtn.addEventListener('touchstart', () => movePlayer('ArrowRight', 8, true));
+rightBtn.addEventListener('touchend', () => movePlayer('ArrowRight', 0, false));
+
+// Jump (allow infinite jumps as in your current logic)
+jumpBtn.addEventListener('touchstart', () => movePlayer(' ', 0, true));

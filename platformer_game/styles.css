@@ -77,6 +77,44 @@
   #canvas {
     display: none;
   }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  #canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    touch-action: none; /* Prevent scrolling when touching the canvas */
+  }
+  #mobile-controls {
+    position: absolute;
+    bottom: 30px;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  #mobile-controls button {
+    width: 70px;
+    height: 70px;
+    margin: 0 15px;
+    font-size: 2rem;
+    border-radius: 50%;
+    opacity: 0.8;
+    pointer-events: auto;
+    border: none;
+    background: #feac32;
+    color: #0a0a23;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    touch-action: manipulation;
+  }
+    
   
   @media (min-width: 768px) {
     .start-screen {
