@@ -28,14 +28,6 @@ Object.values(images).forEach(img => {
   img.addEventListener('load', imageLoaded);
 });
 
-// Show mobile controls if on a touch device
-if ('ontouchstart' in window) {
-  document.getElementById('mobile-controls').style.display = 'flex';
-}
-
-
-
-
 const startBtn = document.getElementById("start-btn");
 const canvas = document.getElementById("canvas");
 const startScreen = document.querySelector(".start-screen");
@@ -46,9 +38,6 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 const gravity = 0.5;
 let isCheckpointCollisionDetectionActive = true;
-const leftBtn = document.getElementById('left-btn');
-const rightBtn = document.getElementById('right-btn');
-const jumpBtn = document.getElementById('jump-btn');
 
 const proportionalSize = (size) => {
   return innerHeight < 500 ? Math.ceil((size / 500) * innerHeight) : size;
@@ -326,7 +315,6 @@ const movePlayer = (key, xVelocity, isPressed) => {
       player.velocity.x += xVelocity;
   }
 }
-
 
 const startGame = () => {
   canvas.style.display = "block";
