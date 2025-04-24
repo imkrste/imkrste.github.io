@@ -78,8 +78,8 @@ function initGame() {
     player = {
         x: 100,
         y: 100,
-        width: 50,
-        height: 50,
+        width: 80,
+        height: 80,
         velocityY: 0,
         velocityX: 0,
         speed: 5,
@@ -241,7 +241,7 @@ function gameLoop() {
                 showMessage(`Собрани куриња! (${collectedCheckpoints.size}/30)`);
 
                 if (collectedCheckpoints.size === checkpoints.length) {
-                    showMessage('Ги собравте сите куриња!');
+                    showMessage('Ивона ги собра сите куриња!');
                     // End the game after a short delay
                     setTimeout(endGame, 1000);
                     return;
@@ -254,9 +254,9 @@ function gameLoop() {
     ctx.drawImage(playerImg, player.x - cameraX, player.y, player.width, player.height);
 
     // Display checkpoint counter
-    ctx.fillStyle = 'white';
+   /* ctx.fillStyle = 'white';
     ctx.font = '16px Arial';
-    ctx.fillText(`Куриња: ${collectedCheckpoints.size}/${checkpoints.length}`, 10, 30);
+    ctx.fillText(`Куриња: ${collectedCheckpoints.size}/${checkpoints.length}`, 10, 30); */
 
     // Continue the game loop
     if (gameActive) {
