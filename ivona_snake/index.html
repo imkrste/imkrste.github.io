@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Snake Game ИВОНА</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background-color: #222;
+    color: white;
+    font-family: monospace, monospace;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .game-area {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  #game {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    gap: 2px;
+    width: 100%;
+    max-width: 90vmin;
+    height: 100%;
+    max-height: 90vmin;
+    touch-action: none;
+  }
+  
+  .cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 6vmin;
+    user-select: none;
+  }
+  
+  .snake {
+    color: #0f0;
+  }
+  
+  .food {
+    color: #f00;
+  }
+  
+  .controls-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .controls-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 5px 0;
+  }
+  
+  button {
+    font-size: 6vmin;
+    width: 20vmin;
+    height: 15vmin;
+    margin: 0 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #444;
+    color: white;
+    touch-action: manipulation;
+  }
+  
+  button:active {
+    background-color: #666;
+  }
+  
+  .score {
+    font-size: 4vmin;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="game-area">
+    <div id="game"></div>
+  </div>
+  <div class="controls-area">
+    <div class="score">КУРОВИ: <span id="score">0</span></div>
+    <div class="controls-row">
+      <button id="up">↑</button>
+    </div>
+    <div class="controls-row">
+      <button id="left">←</button>
+      <button id="down">↓</button>
+      <button id="right">→</button>
+    </div>
+  </div>
+</div>
+<script>
+  const game = document.getElementById('game');
+  const scoreElement = document.getElementById('score');
+  const rows = 20;
+  const cols = 20;
+  let snake = ['И'];
+  let direction = { x: 0, y: 0 };
+  let food = null;
+  let snakeLength = 1;
+  let score = 0;
+
+  function createGrid() {
+    game.innerHTML = '';
+    for (let i = 0; i < rows * cols; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      game.appendChild(cell);
+    }
+  }
+
+  function getIndex(x, y) {
+    return y * cols + x;
+  }
+
+  function placeFood() {
+    let x, y, idx;
+    do {
+      x = Math.floor(Math.random() * cols);
+      y = Math.floor(Math.random() * rows);
+      idx = getIndex(x, y);
+    } while (snakePositions.has(idx));
+    food = { x, y, char: "КУР" };
+  }
+
+  let snakePositions = new Set();
+  let snakeCoords = [{ x: 10, y: 10 }];
+
+  function updateSnakeChars() {
+    // Snake chars start as И, then ИВ, ИВО, ИВОН, ИВОНА, then add А's
+    const base = 'ИВОНА';
+    let chars = '';
+    if (snakeLength <= 5) {
+      chars = base.slice(0, snakeLength);
+    } else {
+      chars = base + 'А'.repeat(snakeLength - 5);
+    }
+    snake = chars.split('');
+  }
+
+  function draw() {
+    const cells = game.children;
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].textContent = '';
+      cells[i].classList.remove('snake', 'food');
+    }
+    snakePositions.clear();
+    for (let i = 0; i < snakeCoords.length; i++) {
+      const pos = snakeCoords[i];
+      const idx = getIndex(pos.x, pos.y);
+      snakePositions.add(idx);
+      cells[idx].textContent = snake[i];
+      cells[idx].classList.add('snake');
+    }
+    if (food) {
+      const foodIdx = getIndex(food.x, food.y);
+      cells[foodIdx].textContent = food.char;
+      cells[foodIdx].classList.add('food');
+    }
+  }
+
+  function moveSnake() {
+    if (direction.x === 0 && direction.y === 0) return;
+    const head = snakeCoords[0];
+    const newHead = { 
+      x: (head.x + direction.x + cols) % cols, 
+      y: (head.y + direction.y + rows) % rows 
+    };
+
+    // Check collision with self
+    for (let i = 0; i < snakeCoords.length; i++) {
+      if (snakeCoords[i].x === newHead.x && snakeCoords[i].y === newHead.y) {
+        alert('ИГРАТА ЗАВРШИ! СОБРАВТЕ ' + score + ' КУРА');
+        resetGame();
+        return;
+      }
+    }
+
+    snakeCoords.unshift(newHead);
+
+    // Check if food eaten
+    if (food && newHead.x === food.x && newHead.y === food.y) {
+      snakeLength++;
+      score++;
+      scoreElement.textContent = score;
+      updateSnakeChars();
+      placeFood();
+    } else {
+      snakeCoords.pop();
+    }
+  }
+
+  function resetGame() {
+    snakeLength = 1;
+    score = 0;
+    scoreElement.textContent = score;
+    snakeCoords = [{ x: 10, y: 10 }];
+    direction = { x: 0, y: 0 };
+    updateSnakeChars();
+    placeFood();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    switch (e.key) {
+      case 'ArrowUp':
+        if (direction.y === 1) break;
+        direction = { x: 0, y: -1 };
+        break;
+      case 'ArrowDown':
+        if (direction.y === -1) break;
+        direction = { x: 0, y: 1 };
+        break;
+      case 'ArrowLeft':
+        if (direction.x === 1) break;
+        direction = { x: -1, y: 0 };
+        break;
+      case 'ArrowRight':
+        if (direction.x === -1) break;
+        direction = { x: 1, y: 0 };
+        break;
+    }
+  });
+
+  // Mobile controls
+  document.getElementById('up').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.y !== 1) direction = { x: 0, y: -1 };
+  });
+  document.getElementById('down').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.y !== -1) direction = { x: 0, y: 1 };
+  });
+  document.getElementById('left').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.x !== 1) direction = { x: -1, y: 0 };
+  });
+  document.getElementById('right').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (direction.x !== -1) direction = { x: 1, y: 0 };
+  });
+  
+  // Also add click events for desktop testing
+  document.getElementById('up').addEventListener('click', () => {
+    if (direction.y !== 1) direction = { x: 0, y: -1 };
+  });
+  document.getElementById('down').addEventListener('click', () => {
+    if (direction.y !== -1) direction = { x: 0, y: 1 };
+  });
+  document.getElementById('left').addEventListener('click', () => {
+    if (direction.x !== 1) direction = { x: -1, y: 0 };
+  });
+  document.getElementById('right').addEventListener('click', () => {
+    if (direction.x !== -1) direction = { x: 1, y: 0 };
+  });
+
+  createGrid();
+  resetGame();
+  setInterval(() => {
+    moveSnake();
+    draw();
+  }, 300);
+</script>
+</body>
+</html>
