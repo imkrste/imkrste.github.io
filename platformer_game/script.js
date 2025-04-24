@@ -339,4 +339,38 @@ window.addEventListener("keydown", ({ key }) => {
 window.addEventListener("keyup", ({ key }) => {
   movePlayer(key, 0, false);
 });
+canvas.addEventListener("touchstart", handleTouch);
+canvas.addEventListener("touchmove", handleTouch);
+canvas.addEventListener("touchend", handleTouchEnd);
+function handleTouch(e) {
+  // Prevent default behavior (scrolling, zooming)
+  e.preventDefault();
+  
+  if (!e.touches.length) return;
+  
+  const touch = e.touches[0];
+  const canvasRect = canvas.getBoundingClientRect();
+  const touchX = touch.clientX - canvasRect.left;
+  
+  // Determine which side of the screen was touched
+  if (touchX < canvas.width / 3) {
+    // Left third of screen - move left
+    keys.leftKey.pressed = true;
+    keys.rightKey.pressed = false;
+  } else if (touchX > (canvas.width / 3) * 2) {
+    // Right third of screen - move right
+    keys.rightKey.pressed = true;
+    keys.leftKey.pressed = false;
+  } else {
+    // Middle third of screen - jump
+    
+      player.velocity.y -= 8;
+    
+  }
+}
 
+function handleTouchEnd(e) {
+  // Stop movement when touch ends
+  keys.leftKey.pressed = false;
+  keys.rightKey.pressed = false;
+}
