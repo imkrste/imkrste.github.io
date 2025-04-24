@@ -352,11 +352,3 @@ window.addEventListener("keyup", ({ key }) => {
   movePlayer(key, 0, false);
 });
 
-// Movement: left and right
-leftBtn.addEventListener('touchstart', () => movePlayer('ArrowLeft', 8, true));
-leftBtn.addEventListener('touchend', () => movePlayer('ArrowLeft', 0, false));
-rightBtn.addEventListener('touchstart', () => movePlayer('ArrowRight', 8, true));
-rightBtn.addEventListener('touchend', () => movePlayer('ArrowRight', 0, false));
-
-// Jump (allow infinite jumps as in your current logic)
-jumpBtn.addEventListener('touchstart', () => movePlayer(' ', 0, true));
