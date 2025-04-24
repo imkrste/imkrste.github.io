@@ -1,4 +1,3 @@
-// At the top of your script.js file
 const images = {
   player: new Image(),
   platform: new Image(),
@@ -34,19 +33,11 @@ const startScreen = document.querySelector(".start-screen");
 const checkpointScreen = document.querySelector(".checkpoint-screen");
 const checkpointMessage = document.querySelector(".checkpoint-screen > p");
 const mobileControls = document.getElementById("mobile-controls");
-const leftControl = document.getElementById("left-control");
-const rightControl = document.getElementById("right-control");
+const leftBtn = document.getElementById("left-btn");
+const rightBtn = document.getElementById("right-btn");
+const jumpBtn = document.getElementById("jump-btn");
+
 const ctx = canvas.getContext("2d");
-
-// Mobile detection
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-// Touch control variables
-let touchStartX = 0;
-let touchStartY = 0;
-let isTouchingLeft = false;
-let isTouchingRight = false;
-let isJumping = false;
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -193,33 +184,32 @@ const checkpoints = checkpointPositions.map(
 const animate = () => {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  
   platforms.forEach((platform) => {
       platform.draw();
   });
-
+  
   checkpoints.forEach(checkpoint => {
       checkpoint.draw();
   });
-
+  
   player.update();
-
-  // Handle movement based on keys or touch
-  if ((keys.rightKey.pressed || isTouchingRight) && player.position.x < proportionalSize(400)) {
+  
+  if (keys.rightKey.pressed && player.position.x < proportionalSize(400)) {
       player.velocity.x = 5;
-  } else if ((keys.leftKey.pressed || isTouchingLeft) && player.position.x > proportionalSize(100)) {
+  } else if (keys.leftKey.pressed && player.position.x > proportionalSize(100)) {
       player.velocity.x = -5;
   } else {
       player.velocity.x = 0;
-
-      if ((keys.rightKey.pressed || isTouchingRight) && isCheckpointCollisionDetectionActive) {
+      
+      if (keys.rightKey.pressed && isCheckpointCollisionDetectionActive) {
           platforms.forEach((platform) => {
               platform.position.x -= 5;
           });
           checkpoints.forEach((checkpoint) => {
               checkpoint.position.x -= 5;
           });
-      } else if ((keys.leftKey.pressed || isTouchingLeft) && isCheckpointCollisionDetectionActive) {
+      } else if (keys.leftKey.pressed && isCheckpointCollisionDetectionActive) {
           platforms.forEach((platform) => {
               platform.position.x += 5;
           });
@@ -228,7 +218,7 @@ const animate = () => {
           });
       }
   }
-
+  
   platforms.forEach((platform) => {
       // AABB collision detection
       const collision =
@@ -236,7 +226,7 @@ const animate = () => {
           player.position.x + player.width > platform.position.x &&
           player.position.y < platform.position.y + platform.height &&
           player.position.y + player.height > platform.position.y;
-
+          
       if (collision) {
           // Determine which side was hit based on velocity and previous position
           // Top collision (landing on platform)
@@ -263,7 +253,7 @@ const animate = () => {
           }
       }
   });
-
+  
   checkpoints.forEach((checkpoint, index, checkpoints) => {
       // AABB collision detection for checkpoints
       const checkpointCollision =
@@ -271,12 +261,12 @@ const animate = () => {
           player.position.x + player.width > checkpoint.position.x &&
           player.position.y < checkpoint.position.y + checkpoint.height &&
           player.position.y + player.height > checkpoint.position.y;
-
+          
       // Additional game logic conditions
       const gameLogicConditions =
           isCheckpointCollisionDetectionActive &&
           (index === 0 || checkpoints[index - 1].claimed === true);
-
+          
       if (checkpointCollision && gameLogicConditions) {
           checkpoint.claim();
           if (index === checkpoints.length - 1) {
@@ -305,7 +295,7 @@ const movePlayer = (key, xVelocity, isPressed) => {
       player.velocity.y = 0;
       return;
   }
-
+  
   switch (key) {
       case "ArrowLeft":
           keys.leftKey.pressed = isPressed;
@@ -317,10 +307,7 @@ const movePlayer = (key, xVelocity, isPressed) => {
       case "ArrowUp":
       case " ":
       case "Spacebar":
-      case "Jump":
-          if (player.velocity.y === 0) { // Only jump if on ground
-              player.velocity.y -= 8;
-          }
+          player.velocity.y -= 8;
           break;
       case "ArrowRight":
           keys.rightKey.pressed = isPressed;
@@ -328,7 +315,6 @@ const movePlayer = (key, xVelocity, isPressed) => {
               player.velocity.x = xVelocity;
           }
           player.velocity.x += xVelocity;
-          break;
   }
 };
 
@@ -336,9 +322,9 @@ const startGame = () => {
   canvas.style.display = "block";
   startScreen.style.display = "none";
   
-  // Show mobile controls if on mobile device
-  if (isMobile) {
-      mobileControls.style.display = "block";
+  // Show mobile controls on small screens
+  if (window.innerWidth <= 767) {
+      mobileControls.style.display = "flex";
   }
   
   animate();
@@ -352,43 +338,19 @@ const showCheckpointScreen = (msg) => {
   }
 };
 
-// Touch event handlers
-function handleTouchStart(e) {
-  e.preventDefault();
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-  
-  // Determine which half of the screen was touched
-  if (touch.target === leftControl) {
-      isTouchingLeft = true;
-  } else if (touch.target === rightControl) {
-      isTouchingRight = true;
-      movePlayer("Jump", 0, true);
-  }
-}
-
-function handleTouchMove(e) {
-  e.preventDefault();
-  // Not needed for this simple control scheme
-}
-
-function handleTouchEnd(e) {
-  e.preventDefault();
-  if (e.target === leftControl || (e.changedTouches && e.changedTouches[0].target === leftControl)) {
-      isTouchingLeft = false;
-  } else if (e.target === rightControl || (e.changedTouches && e.changedTouches[0].target === rightControl)) {
-      isTouchingRight = false;
-  }
-}
-
-// Window resize handler
-function handleResize() {
+// Handle window resize
+window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-}
+  
+  if (window.innerWidth <= 767) {
+      mobileControls.style.display = canvas.style.display === "block" ? "flex" : "none";
+  } else {
+      mobileControls.style.display = "none";
+  }
+});
 
-// Event listeners
+// Keyboard controls
 startBtn.addEventListener("click", startGame);
 
 window.addEventListener("keydown", ({ key }) => {
@@ -399,14 +361,35 @@ window.addEventListener("keyup", ({ key }) => {
   movePlayer(key, 0, false);
 });
 
-// Add touch event listeners for mobile
-if (isMobile) {
-  leftControl.addEventListener("touchstart", handleTouchStart, { passive: false });
-  leftControl.addEventListener("touchend", handleTouchEnd, { passive: false });
-  
-  rightControl.addEventListener("touchstart", handleTouchStart, { passive: false });
-  rightControl.addEventListener("touchend", handleTouchEnd, { passive: false });
-}
+// Mobile touch controls
+leftBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  movePlayer("ArrowLeft", 8, true);
+});
 
-// Handle window resize
-window.addEventListener("resize", handleResize);
+leftBtn.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  movePlayer("ArrowLeft", 0, false);
+});
+
+rightBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  movePlayer("ArrowRight", 8, true);
+});
+
+rightBtn.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  movePlayer("ArrowRight", 0, false);
+});
+
+jumpBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  movePlayer("ArrowUp", 0, false);
+});
+
+// Prevent default touch behavior to avoid scrolling while playing
+document.addEventListener("touchmove", (e) => {
+  if (canvas.style.display === "block") {
+      e.preventDefault();
+  }
+}, { passive: false });
