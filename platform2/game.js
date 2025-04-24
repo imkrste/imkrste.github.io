@@ -1,5 +1,9 @@
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
+const startScreen = document.getElementById('start-screen');
+const endScreen = document.getElementById('end-screen');
+const startButton = document.getElementById('start-button');
+const restartButton = document.getElementById('restart-button');
 
 // Set canvas size to fill the screen
 function resizeCanvas() {
@@ -20,7 +24,7 @@ checkpointImg.src = 'checkpoint-sprite.png';
 // Game variables
 const gravity = 0.5;
 const jumpStrength = -10;
-const player = {
+let player = {
     x: 100,
     y: 100,
     width: 50,
@@ -38,12 +42,16 @@ const keys = {
 };
 
 // Platforms and checkpoints
-const platforms = [];
-const checkpoints = [];
-const collectedCheckpoints = new Set();
+let platforms = [];
+let checkpoints = [];
+let collectedCheckpoints = new Set();
+let gameActive = false;
+let animationId;
+let cameraX = 0;
 
 // Generate random platforms
 function generatePlatforms() {
+    platforms = [];
     // Add a starting platform under the player
     platforms.push({ x: 50, y: 200, width: 200, height: 20 });
     
@@ -56,6 +64,7 @@ function generatePlatforms() {
 
 // Generate checkpoints near platforms
 function generateCheckpoints() {
+    checkpoints = [];
     for (let i = 0; i < 30; i++) {
         const platform = platforms[Math.floor(Math.random() * platforms.length)];
         const x = platform.x + platform.width / 2 - 15;
@@ -64,8 +73,30 @@ function generateCheckpoints() {
     }
 }
 
+// Initialize game
+function initGame() {
+    player = {
+        x: 100,
+        y: 100,
+        width: 50,
+        height: 50,
+        velocityY: 0,
+        velocityX: 0,
+        speed: 5,
+        jumping: false
+    };
+    
+    collectedCheckpoints = new Set();
+    cameraX = 0;
+    
+    generatePlatforms();
+    generateCheckpoints();
+}
+
 // Handle input
 window.addEventListener('keydown', (e) => {
+    if (!gameActive) return;
+    
     if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
     if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
     if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.up = true;
@@ -78,6 +109,8 @@ window.addEventListener('keyup', (e) => {
 
 // For mobile controls
 canvas.addEventListener('touchstart', (e) => {
+    if (!gameActive) return;
+    
     e.preventDefault();
     const touch = e.touches[0];
     const touchX = touch.clientX;
@@ -102,9 +135,6 @@ canvas.addEventListener('touchend', (e) => {
     keys.right = false;
     keys.up = false;
 });
-
-// Game state
-let cameraX = 0;
 
 // Show messages
 const messageDiv = document.getElementById('message');
@@ -135,6 +165,13 @@ function checkPlatformCollision() {
             break;
         }
     }
+}
+
+// End the game
+function endGame() {
+    gameActive = false;
+    cancelAnimationFrame(animationId);
+    endScreen.style.display = 'flex';
 }
 
 // Game loop
@@ -201,12 +238,12 @@ function gameLoop() {
                 player.y + player.height > checkpoint.y) {
                 checkpoint.collected = true;
                 collectedCheckpoints.add(index);
-                showMessage(`Checkpoint collected! (${collectedCheckpoints.size}/30)`);
+                showMessage(`Собрани куриња! (${collectedCheckpoints.size}/30)`);
 
                 if (collectedCheckpoints.size === checkpoints.length) {
-                    showMessage('All checkpoints collected! You win!');
-                    // Stop the game loop
-                    cancelAnimationFrame(animationId);
+                    showMessage('Ги собравте сите куриња!');
+                    // End the game after a short delay
+                    setTimeout(endGame, 1000);
                     return;
                 }
             }
@@ -219,13 +256,28 @@ function gameLoop() {
     // Display checkpoint counter
     ctx.fillStyle = 'white';
     ctx.font = '16px Arial';
-    ctx.fillText(`Checkpoints: ${collectedCheckpoints.size}/${checkpoints.length}`, 10, 30);
+    ctx.fillText(`Куриња: ${collectedCheckpoints.size}/${checkpoints.length}`, 10, 30);
 
     // Continue the game loop
-    animationId = requestAnimationFrame(gameLoop);
+    if (gameActive) {
+        animationId = requestAnimationFrame(gameLoop);
+    }
 }
 
-let animationId;
-generatePlatforms();
-generateCheckpoints();
-animationId = requestAnimationFrame(gameLoop);
+// Event listeners for buttons
+startButton.addEventListener('click', () => {
+    startScreen.style.display = 'none';
+    gameActive = true;
+    initGame();
+    gameLoop();
+});
+
+restartButton.addEventListener('click', () => {
+    endScreen.style.display = 'none';
+    gameActive = true;
+    initGame();
+    gameLoop();
+});
+
+// Initialize the game but don't start the loop yet
+initGame();

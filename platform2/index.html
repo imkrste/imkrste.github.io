@@ -10,6 +10,34 @@
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
         <div id="message" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); color: white; font-size: 20px; font-weight: bold; z-index: 10;"></div>
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>Курвантура - соберете ги сите куриња</h1>
+            <div class="instructions">
+                <h2>Како се игра:</h2>
+                <p><strong>PC контроли:</strong></p>
+                <ul>
+                    <li>Стрелки или WASD</li>
+                    <li>СПЕЈС: СКОК</li>
+                </ul>
+                <p><strong>Мобилен:</strong></p>
+                <ul>
+                    <li>Тап лево: движи лево</li>
+                    <li>Тап десно: движи десно</li>
+                    <li>Тап на средина: СКОК</li>
+                </ul>
+                <p><strong>Цел:</strong> Соберете 30 куриња за да победите!</p>
+            </div>
+            <button id="start-button">Старт</button>
+        </div>
+        
+        <!-- End Screen -->
+        <div id="end-screen" class="screen">
+            <h1>Честито!</h1>
+            <p>Ги собравте сите куриња!</p>
+            <button id="restart-button">Играјте повторно</button>
+        </div>
     </div>
     <script src="game.js"></script>
 </body>

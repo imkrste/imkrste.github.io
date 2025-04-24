@@ -4,6 +4,7 @@ html, body {
     overflow: hidden;
     height: 100%;
     background-color: #000;
+    font-family: Arial, sans-serif;
 }
 
 #game-container {
@@ -23,4 +24,83 @@ html, body {
 
 #message {
     pointer-events: none;
+}
+
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    z-index: 100;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.screen h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #ffcc00;
+}
+
+.screen h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #ffcc00;
+}
+
+.instructions {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.instructions ul {
+    text-align: left;
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+button {
+    background-color: #ffcc00;
+    color: #000;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #ffdd55;
+}
+
+#end-screen {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .screen h1 {
+        font-size: 2rem;
+    }
+    
+    .instructions {
+        padding: 15px;
+    }
+    
+    button {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
 }
