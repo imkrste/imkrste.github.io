@@ -34,9 +34,7 @@ if ('ontouchstart' in window) {
 }
 
 
-const leftBtn = document.getElementById('left-btn');
-const rightBtn = document.getElementById('right-btn');
-const jumpBtn = document.getElementById('jump-btn');
+
 
 const startBtn = document.getElementById("start-btn");
 const canvas = document.getElementById("canvas");
@@ -48,6 +46,9 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 const gravity = 0.5;
 let isCheckpointCollisionDetectionActive = true;
+const leftBtn = document.getElementById('left-btn');
+const rightBtn = document.getElementById('right-btn');
+const jumpBtn = document.getElementById('jump-btn');
 
 const proportionalSize = (size) => {
   return innerHeight < 500 ? Math.ceil((size / 500) * innerHeight) : size;
