@@ -4,6 +4,8 @@ const startScreen = document.getElementById('start-screen');
 const endScreen = document.getElementById('end-screen');
 const startButton = document.getElementById('start-button');
 const restartButton = document.getElementById('restart-button');
+const playerNameInput = document.getElementById('player-name');
+const winnerNameSpan = document.getElementById('winner-name');
 
 // Set canvas size to fill the screen
 function resizeCanvas() {
@@ -238,10 +240,11 @@ function gameLoop() {
                 player.y + player.height > checkpoint.y) {
                 checkpoint.collected = true;
                 collectedCheckpoints.add(index);
-                showMessage(`Собрани куриња! (${collectedCheckpoints.size}/30)`);
+                showMessage(`${playerName} има лапнато (${collectedCheckpoints.size}/30) куриња`);
 
                 if (collectedCheckpoints.size === checkpoints.length) {
-                    showMessage('Ивона ги собра сите куриња!');
+                    winnerNameSpan.textContent = playerName;
+                    showMessage(`${playerName} ги лапна сите куриња!`);
                     // End the game after a short delay
                     setTimeout(endGame, 1000);
                     return;
@@ -266,11 +269,18 @@ function gameLoop() {
 
 // Event listeners for buttons
 startButton.addEventListener('click', () => {
+    playerName = playerNameInput.value.trim();
+    
+    if (playerName === '') {
+        playerName = 'Огинче'; // Default name if none provided
+    }
     startScreen.style.display = 'none';
     gameActive = true;
     initGame();
     gameLoop();
 });
+
+
 
 restartButton.addEventListener('click', () => {
     endScreen.style.display = 'none';

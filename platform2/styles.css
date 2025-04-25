@@ -24,6 +24,7 @@ html, body {
 
 #message {
     pointer-events: none;
+    
 }
 
 .screen {
@@ -70,6 +71,28 @@ html, body {
     padding-left: 20px;
 }
 
+.name-input {
+    margin-bottom: 25px;
+}
+
+.name-input label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #ffcc00;
+}
+
+.name-input input {
+    padding: 10px 15px;
+    font-size: 1.1rem;
+    border: 2px solid #ffcc00;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 5px;
+    width: 250px;
+    text-align: center;
+}
+
 button {
     background-color: #ffcc00;
     color: #000;
@@ -101,6 +124,11 @@ button:hover {
     
     button {
         padding: 12px 25px;
+        font-size: 1rem;
+    }
+    
+    .name-input input {
+        width: 200px;
         font-size: 1rem;
     }
 }

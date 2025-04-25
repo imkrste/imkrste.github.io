@@ -29,13 +29,17 @@
                 </ul>
                 <p><strong>Цел:</strong> Соберете 30 куриња за да победите!</p>
             </div>
+            <div class="name-input">
+                <label for="player-name">Кој ќе оди на Курвантура?</label>
+                <input type="text" id="player-name" placeholder="Твоето Име" maxlength="20">
+            </div>
             <button id="start-button">Старт</button>
         </div>
         
         <!-- End Screen -->
         <div id="end-screen" class="screen">
             <h1>Браво!</h1>
-            <p>Ивона ги собра сите куриња!</p>
+            <p><span id="winner-name">Player</span> ги собра сите куриња!</p>
             <button id="restart-button">Играј повторно</button>
         </div>
     </div>
