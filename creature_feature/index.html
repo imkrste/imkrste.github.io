@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Varela&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="">
+    <title>Fakemon GO!</title>
+    </head>
+    <body>
+        <main>
+            <h1>Fakemon GO!</h1>
+            
+        <div class="container">
+       
+        <div class="search-container">
+            <label for="search-input">Search for a Creature (Name or ID):</label>
+            <input type="text" id="search-input" value="Pyrolynx" required>
+            <button id="search-button">Search</button>
+        </div>
+
+        <div class="creature-display">
+           <div class="creature-base-info">
+            <div id="creature-toggle">
+                <p ><span id="creature-name">PYROLYNX</span> <span id="creature-id">#3</span></p>
+                
+            
+            
+          
+            <div class="physical-info">
+                <p>Weight: <span id="weight"></span> Height: <span id="height"></span></p>
+                <div id="types">FIRE               
+                </div>
+                <p id="ability-name"><strong>Blazing Reflex</strong></p>
+                <p id="ability-description">Increases speed when hit by a Fire-type move.</p>
+            </div>
+            
+            </div>
+            
+
+           </div>
+            <div class="stats-container">
+                <div class="stats-grid">Base</div> <div class="stats-grid">Stats</div>
+                <div class="stats-grid">HP:</div> <div class="stats-grid" id="hp"></div>
+                <div class="stats-grid">Attack: </div><div class="stats-grid" id="attack"></div>
+                <div class="stats-grid">Defense: </div><div class="stats-grid" id="defense"></div>
+                <div class="stats-grid">Special Attack:</div> <div class="stats-grid" id="special-attack"></div>
+                <div class="stats-grid">Special Defense:</div><div class="stats-grid" id="special-defense"></div>
+                <div class="stats-grid">Speed:</div> <div class="stats-grid" id="speed"></div>
+                
+            </div>
+        </div>
+        </div>
+
+     </main>
+    <script src="./script.js"></script>
+  </body>
