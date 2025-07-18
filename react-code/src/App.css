@@ -1,0 +1,142 @@
+body {
+  background: #f5f6fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+form {
+  background: #fff;
+  max-width: 500px;
+  margin: 40px auto 0 auto;
+  padding: 32px 24px 24px 24px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border: 1px solid black;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-align: center;
+  font-weight: 700;
+  margin-top: 0;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #222;
+  gap: 6px;
+
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  padding: 11px 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 1rem;
+  margin-top: 4px;
+  transition: border 0.2s;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus {
+  border-color: black;
+  background: #fff;
+}
+
+input[type="checkbox"] {
+  margin-top: 10px;
+  width: 18px;
+  height: 18px;
+  accent-color: black;
+}
+
+button[type="submit"] {
+  margin-top: 18px;
+  background: white;
+  color: black;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: background 0.18s;
+  letter-spacing: 0.5px;
+  border: 1px solid black;
+}
+
+button[type="submit"]:hover {
+  background: black;
+  color: white;
+}
+
+form > label {
+  margin-bottom: 0;
+}
+
+form > label:last-of-type {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+::placeholder {
+  color: #b9b9b9;
+  opacity: 1;
+}
+
+/* Confirmation message styling */
+div {
+  max-width: 500px;
+  margin: 24px auto 0 auto;
+  background: #f5f6fa;
+  border-radius: 8px;
+  padding: 18px 24px;
+  font-size: 1.07rem;
+  color: #232323;
+  
+}
+
+div p {
+  margin: 6px 0;
+}
+
+div p:first-of-type {
+  color: black;
+  font-weight: bold;
+}
+
+form {
+  margin-bottom: 0;
+}
+
+/* Center the title */
+h1 {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  color: #232323;
+}
+
+.result {
+  border: 1px solid black;
+}
+
+.bold {
+  font-weight: bold;
+  color:black
+}

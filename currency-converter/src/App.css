@@ -1,0 +1,58 @@
+
+.converter-container {
+    background-color: rgb(9, 9, 9);
+    width: 400px;
+    margin: 60px auto;
+    padding: 40px 30px;
+    text-align: center;
+    
+}
+
+.converter-container h1 {
+    color: #fff;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.converter-container h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+
+.converter-container input[type="number"], 
+.converter-container select {
+    width: 100%;
+    padding: 10px 8px;
+    margin-bottom: 22px;
+    font-size: 1rem;
+    background: #e6e6f0;
+    color: #22223a;
+    box-sizing: border-box;
+    outline: none;
+}
+
+
+
+.converter-container input:focus {
+   
+    border: 1.7px solid yellowgreen;
+
+}
+
+.naslov {
+    color: #ccc;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.converted-amount {
+    color: white;
+    font-weight: bold;
+    font-size: 1.3rem;
+    margin-top: 18px;
+}

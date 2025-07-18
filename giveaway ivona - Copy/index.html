@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>HAIR.MK GIVEAWAY</title>
+  </head>
+  <body>
+
+   <div class="container">     
+<h1>HAIR.MK GIVEAWAY</h1>
+<form id="myForm" action="submit.php" method="post">
+    
+  <input id="name" name="name" required="" type="text" placeholder="Име и Презиме"/>
+    <input id="email" name="email" required="" type="email" placeholder="Внесете ја вашата Email адреса овде"  />
+    <input id="submit" name="submit" type="submit" value="Пријави Учество!" /></form>
+
+    <div id="message">
+      <p id="successMessage"  style="display: none;" >HAIR.MK GIVEAWAY УСПЕШНА ПРИЈАВА!</p>
+      <p id="errorMessage"  style="display: none;">Овој Емаил е веќе искористен</p>
+  </div>
+
+<p class="pravilo">Со притискање на копчето <span>Пријави Учество!</span> се согласувам на условите на HAIR.MK да добивам информации за попусти и понуди. </p>
+</div>
+
+
+
+<script>
+  document.getElementById('myForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      var formData = new FormData(this);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'submit.php', true);
+
+      xhr.onload = function () {
+          if (xhr.status === 200) {
+              var response = JSON.parse(xhr.responseText);
+              if (response.success) {
+                  document.getElementById('errorMessage').style.display = 'none';
+                  document.getElementById('successMessage').style.display = 'block';
+                  setTimeout(function() {
+                      window.location.href = 'http://www.hair.mk';
+                  }, 1000); // 1-second delay before redirecting
+              } else {
+                  document.getElementById('successMessage').style.display = 'none';
+                  document.getElementById('errorMessage').style.display = 'block';
+              }
+          }
+      };
+      xhr.send(formData);
+  });
+</script>
+</body>
+
+</html>
