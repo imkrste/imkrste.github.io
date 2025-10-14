@@ -79,6 +79,10 @@ h1 {
     #drum-machine {
         max-width: 100%;
     }
+
+    #pad-bank {
+        gap: 10px;
+    }
     
     .drum-pad {
         width: 70px;
