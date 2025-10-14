@@ -66,6 +66,7 @@ h1 {
 
 
 @media screen and (max-width: 768px) {
+    
     #drum-machine {
         width: 90%;
         height: auto;
@@ -89,6 +90,7 @@ h1 {
     
     h1 {
         font-size: 1.5rem;
+        margin-top: 20%;
     }
 }
 
@@ -129,6 +131,7 @@ h1 {
     h1 {
         font-size: 1.2rem;
         padding-bottom: 5px;
+        margin-top: 20%;
     }
 }
 
@@ -151,5 +154,6 @@ h1 {
     
     h1 {
         font-size: 1rem;
+        margin-top: 20%;
     }
 }
