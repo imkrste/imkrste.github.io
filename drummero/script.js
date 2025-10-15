@@ -17,6 +17,7 @@ function playAudio(drumpad) {
     const audio = drumpad.querySelector(".clip");
     if(audio) {
         drumpad.classList.add('active');
+        audio.load();
         audio.currentTime = 0;
         audio.play();
         display.textContent = drumKit[`${drumpad.innerText}`].name;
