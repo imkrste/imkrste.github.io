@@ -115,6 +115,7 @@ hr {
 
     body {
         width: auto;
+        height: 100dvh;
     }
 
     #weather-info {
