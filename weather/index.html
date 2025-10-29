@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Varela&display=swap" rel="stylesheet">
+   <title>Weather App</title>
+  </head>
+
+  <body>
+    
+        <h1>WEATHERO</h1>
+        <div id="weather-info">
+          
+          <div id="location">LONDON</div>
+          <div id="top-container">
+          <div id="temp-container"><div id="main-temperature">Temperature: 6c</div>
+
+          <div id="feels-like">Feels like: 7c</div>
+          </div>
+          <div id="icon-container">
+        <img id="weather-icon" src="https://cdn.freecodecamp.org/weather-icons/01n.png" alt="Weather Icon">
+        <div id="weather-main">Clear</div>
+        </div>
+        </div>
+        <div id="space"></div>
+        <div id="bottom-container">
+        <div id="bottom-left">       
+        <div id="humidity">Humidity: 81</div>
+        <div id="wind">Wind: 1.79</div>
+        <div id="wind-gust">Wind gust: 289</div>
+        </div>
+        <div id="bottom-right"><svg id="arrow" width="50px" height="50px" viewBox="-19.04 0 75.804 75.804" xmlns="http://www.w3.org/2000/svg" fill="#00ffff" stroke="#00ffff" stroke-width="4.093416"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Group_65" data-name="Group 65" transform="translate(-831.568 -384.448)"> <path id="Path_57" data-name="Path 57" d="M833.068,460.252a1.5,1.5,0,0,1-1.061-2.561l33.557-33.56a2.53,2.53,0,0,0,0-3.564l-33.557-33.558a1.5,1.5,0,0,1,2.122-2.121l33.556,33.558a5.53,5.53,0,0,1,0,7.807l-33.557,33.56A1.5,1.5,0,0,1,833.068,460.252Z" fill="#00ffff"></path> </g> </g></svg></div>
+        </div>
+        </div>
+        
+
+        <div id="control">
+           <span>LOCATION</span>
+            <select id="city-select">
+
+                <option value=""></option>
+                <option value="new york">New York</option>
+                <option value="los angeles">Los Angeles</option>
+                <option value="chicago">Chicago</option>
+                <option value="paris">Paris</option>
+                <option value="tokyo">Tokyo</option>
+                <option value="london">London</option>
+            </select>
+            <button id="get-weather-btn">GET WEATHER</button>
+           
+        </div>
+    
+
+    <script src="script.js"></script>
+  </body>
+</html>
