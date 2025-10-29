@@ -3,6 +3,7 @@
 }
 
 body {
+    margin: 0 auto;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -11,6 +12,7 @@ body {
     background-color: black;
     color: aqua;
     font-family: Orbitron;
+    width: 600px;
 }
 
 #weather-info {
@@ -32,6 +34,7 @@ body {
     height: 150px;
     border: 2px solid aqua;
     margin-top: 30px;
+    margin-bottom: 10px;
     padding: 10px;
 }
 
@@ -109,6 +112,16 @@ hr {
 }
 
 @media (max-width: 480px) {
+
+    body {
+        width: auto;
+    }
+
+    #weather-info {
+        height: auto;
+    }
+
+
     #control {
     display: flex;
     flex-direction: column;
