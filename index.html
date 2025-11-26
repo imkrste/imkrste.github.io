@@ -1,14 +1,515 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Penguin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <a href="/penguin/index.html">penguin</a>
-    <a href="/city/index.html">city</a>
-    <a href="/rpg game/index.html">rpg game</a>
-    <a href="/fatzy - calorie calculator/index.html">calorie calculator</a>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault Hunter Dev Portfolio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Bangers for headers, Roboto Condensed for UI text -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #2a2a2a;
+            font-family: 'Roboto Condensed', sans-serif;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ffeb3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>') 12 12, auto;
+        }
+
+        /* Comic/Cell-shaded aesthetic classes */
+        .font-comic { font-family: 'Bangers', cursive; letter-spacing: 0.1em; }
+        
+        .border-comic {
+            border: 3px solid #111;
+            box-shadow: 5px 5px 0px #000;
+        }
+        
+        .text-shadow-comic {
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* Custom Scrollbar for the lists */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; border-left: 2px solid black; }
+        ::-webkit-scrollbar-thumb { background: #facc15; border: 2px solid black; }
+        ::-webkit-scrollbar-thumb:hover { background: #eab308; }
+
+        /* HUD Scanlines */
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        .animate-glitch:hover { animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // --- 3D COMPONENT (The Loot Crate) ---
+        const ThreeScene = () => {
+            const mountRef = useRef(null);
+
+            useEffect(() => {
+                // Scene Setup
+                const scene = new THREE.Scene();
+                // Borderlands usually has colorful skies, but for an artifact viewer, we use a dark void with fog
+                scene.background = new THREE.Color('#2a2a2a'); 
+
+                const camera = new THREE.PerspectiveCamera(45, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 100);
+                camera.position.z = 16;
+                camera.position.y = 1;
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                mountRef.current.appendChild(renderer.domElement);
+
+                // Lighting (High Contrast for Toon look)
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                scene.add(ambientLight);
+                const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+                dirLight.position.set(5, 5, 5);
+                scene.add(dirLight);
+                
+                // --- TOON MATERIAL & OUTLINE HELPERS ---
+                // Helper to create an outlined mesh
+                const createOutlinedMesh = (geometry, color, scale = 1, x=0, y=0, z=0) => {
+    const group = new THREE.Group();
+    group.position.set(x,y,z);
+
+    // 1. The Toon Mesh (The Color)
+    const material = new THREE.MeshToonMaterial({ color: color });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.scale.set(scale, scale, scale);
+    group.add(mesh);
+
+    // 2. The Outer Silhouette (Inverted Hull)
+    // For sharp objects, we need a slightly thicker hull (1.06 vs 1.03) to cover the tips
+    const outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
+    const outlineMesh = new THREE.Mesh(geometry, outlineMaterial);
+    outlineMesh.scale.set(scale * 1.06, scale * 1.06, scale * 1.06); 
+    group.add(outlineMesh);
+
+    // 3. The Inner "Ink" Lines (The Wireframe)
+    // EdgesGeometry calculates only the sharp angles (where the face normals change)
+    const edges = new THREE.EdgesGeometry(geometry); 
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+    const wireframe = new THREE.LineSegments(edges, lineMaterial);
+    wireframe.scale.set(scale, scale, scale); // Match the exact size of the mesh
+    group.add(wireframe);
+
+    return { group, mesh, outlineMesh, wireframe };
+};
+
+                // --- ARTIFACT GENERATION (Eridian Relic) ---
+                const artifactGroup = new THREE.Group();
+                scene.add(artifactGroup);
+
+                // 1. The Core (Glowing Eridian Crystal)
+                // Octahedron looks more "alien" than a cube
+                const coreGeo = new THREE.OctahedronGeometry(1, 0); 
+                const core = createOutlinedMesh(coreGeo, 0xd946ef, 1); // Magenta/Purple
+                artifactGroup.add(core.group);
+
+                // 2. Inner Gyro Ring (Ancient Metal)
+                // Low tubularSegments (6) gives it that hexagonal, low-poly tech look
+                const ring1Geo = new THREE.TorusGeometry(1.6, 0.1, 4, 6); 
+                const ring1 = createOutlinedMesh(ring1Geo, 0x374151, 1); // Dark Gray
+                artifactGroup.add(ring1.group);
+
+                // 3. Outer Gyro Ring
+                const ring2Geo = new THREE.TorusGeometry(2.2, 0.1, 4, 6);
+                const ring2 = createOutlinedMesh(ring2Geo, 0x374151, 1); // Dark Gray
+                // Tilt the initial rotation so they aren't flat
+                ring2.group.rotation.x = Math.PI / 2;
+                artifactGroup.add(ring2.group);
+
+                // 4. Floating Power Shards (The yellow bits)
+                const shardGeo = new THREE.TetrahedronGeometry(0.4, 0); // Triangular pyramids
+                const shards = [];
+                
+                // Create 3 shards orbiting the center
+                for(let i = 0; i < 3; i++){
+                    const shard = createOutlinedMesh(shardGeo, 0xfacc15, 1); // Yellow
+                    const angle = (i / 3) * Math.PI * 2;
+                    // Position in a circle
+                    shard.group.position.set(Math.cos(angle) * 2, 0, Math.sin(angle) * 2);
+                    // Point them inward
+                    shard.group.lookAt(0, 0, 0);
+                    // Rotate to point sharp end out or in (adjust as preferred)
+                    shard.group.rotateX(Math.PI / 2);
+                    
+                    artifactGroup.add(shard.group);
+                    shards.push({ mesh: shard.group, angle: angle });
+                }
+
+                // --- ANIMATION LOOP ---
+                const animate = () => {
+                    requestAnimationFrame(animate);
+
+                    const time = Date.now() * 0.001;
+
+                    // 1. Animate Core: Pulse and complex rotation
+                    core.group.rotation.y += 0.01;
+                    core.group.rotation.z -= 0.005;
+                    // pulsing scale effect
+                    const scale = 1 + Math.sin(time * 2) * 0.1; 
+                    core.group.scale.set(scale, scale, scale);
+
+                    // 2. Animate Rings: Gyroscope movement
+                    ring1.group.rotation.x += 0.01;
+                    ring1.group.rotation.y += 0.005;
+
+                    ring2.group.rotation.x -= 0.005;
+                    ring2.group.rotation.y += 0.01;
+
+                    // 3. Animate Shards: Orbiting and bobbing
+                    shards.forEach((shard, i) => {
+                        // Update orbit angle
+                        shard.angle += 0.01; 
+                        
+                        // Move in circle
+                        shard.mesh.position.x = Math.cos(shard.angle) * 3.5;
+                        shard.mesh.position.z = Math.sin(shard.angle) * 3.5;
+                        
+                        // Bob up and down relative to the others
+                        shard.mesh.position.y = Math.sin(time + i) * 1;
+                        
+                        // Keep pointing at center (optional, or let them spin)
+                        shard.mesh.lookAt(0, 0, 0);
+                        shard.mesh.rotateX(Math.PI / 2); // Re-orient cone after lookAt
+                        
+                        // Self rotation
+                        shard.mesh.rotateY(time);
+                    });
+
+                    // Global floating of the whole artifact
+                    artifactGroup.position.y = Math.sin(time * 0.5) * 0.2;
+
+                    renderer.render(scene, camera);
+                };
+                animate();
+
+                // Handle Resize
+                const handleResize = () => {
+                    if (!mountRef.current) return;
+                    const width = mountRef.current.clientWidth;
+                    const height = mountRef.current.clientHeight;
+                    renderer.setSize(width, height);
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+                };
+                window.addEventListener('resize', handleResize);
+
+                return () => {
+                    window.removeEventListener('resize', handleResize);
+                    mountRef.current.removeChild(renderer.domElement);
+                };
+            }, []);
+
+            return <div ref={mountRef} className="w-full h-full" />;
+        };
+
+        // --- UI COMPONENTS ---
+
+        const NavTab = ({ label, active, onClick }) => (
+            <button 
+                onClick={onClick}
+                className={`
+                    flex-1 py-3 text-2xl font-comic uppercase tracking-widest transform -skew-x-12 transition-all duration-200
+                    border-r-2 border-black
+                    ${active 
+                        ? 'bg-yellow-400 text-black translate-y-2 shadow-inner' 
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'}
+                `}
+            >
+                <span className="block transform skew-x-12">{label}</span>
+            </button>
+        );
+
+        const SkillBadge = ({ name, level, color }) => (
+            <div className="flex flex-col items-center p-2 group cursor-pointer">
+                <div className={`w-16 h-16 border-4 border-black ${color} transform rotate-45 flex items-center justify-center transition-transform group-hover:scale-110 shadow-[4px_4px_0px_rgba(0,0,0,1)]`}>
+                    <div className="transform -rotate-45 font-bold text-black text-xl">{level}/5</div>
+                </div>
+                <span className="mt-4 font-comic text-white text-lg tracking-wider text-shadow-comic">{name}</span>
+            </div>
+        );
+
+        const MissionCard = ({ title, difficulty, rewards, description, type }) => (
+            <div className="bg-gray-800 border-l-8 border-yellow-400 p-4 mb-4 transform hover:translate-x-2 transition-transform relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-1 bg-black text-yellow-400 text-xs font-bold uppercase transform rotate-45 translate-x-3 -translate-y-1 w-16 text-center">
+                    {type}
+                </div>
+                <h3 className="font-comic text-2xl text-white mb-1 uppercase text-shadow-comic">{title}</h3>
+                <div className="flex items-center text-xs font-bold text-gray-400 mb-2 uppercase">
+                    <span className="mr-4">Difficulty: <span className="text-red-500">{'💀'.repeat(difficulty)}</span></span>
+                    <span>Reward: <span className="text-green-400">${rewards}</span></span>
+                </div>
+                <p className="text-gray-300 text-sm leading-tight border-t border-gray-700 pt-2">
+                    {description}
+                </p>
+            </div>
+        );
+
+        // --- PAGE CONTENT ---
+
+        const AboutPage = () => (
+            <div className="animate-float">
+                <h2 className="text-5xl font-comic text-yellow-400 mb-4 text-shadow-comic -rotate-1">
+                    <span className="text-white">Class:</span> Frontend Dev
+                </h2>
+                <div className="bg-gray-900 border-4 border-black p-6 relative">
+                    {/* Corner accents */}
+                    <div className="absolute top-0 left-0 w-4 h-4 bg-yellow-400 border-r-2 border-b-2 border-black"></div>
+                    <div className="absolute top-0 right-0 w-4 h-4 bg-yellow-400 border-l-2 border-b-2 border-black"></div>
+                    <div className="absolute bottom-0 left-0 w-4 h-4 bg-yellow-400 border-r-2 border-t-2 border-black"></div>
+                    <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-400 border-l-2 border-t-2 border-black"></div>
+                    
+                    <p className="text-white text-lg mb-4 font-bold">
+                        "My code makes things go boom boom, in a good way!"
+                    </p>
+                    <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                        Specialized in React.js ecosystems with a chaotic passion for 3D web experiences using Three.js. 
+                        My coding style is aggressive optimization and maximum visual impact.
+                    </p>
+                    
+                    <div className="grid grid-cols-2 gap-4 mt-6">
+                        <div className="bg-gray-800 p-2 border-2 border-black">
+                            <div className="text-xs text-gray-500 uppercase">Current Location</div>
+                            <div className="text-cyan-400 font-bold">Sanctuary III, Skopje, Macedonia</div>
+                        </div>
+                        <div className="bg-gray-800 p-2 border-2 border-black">
+                            <div className="text-xs text-gray-500 uppercase">Level</div>
+                            <div className="text-yellow-400 font-bold">45 (OP 10)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const SkillsPage = () => (
+            <div>
+                <h2 className="text-4xl font-comic text-white mb-6 text-shadow-comic text-center">Skill Trees</h2>
+                <div className="flex justify-center gap-8 flex-wrap">
+                    <SkillBadge name="React" level="5" color="bg-cyan-400" />
+                    <SkillBadge name="ThreeJS" level="4" color="bg-purple-500" />
+                    <SkillBadge name="Tailwind" level="5" color="bg-yellow-400" />
+                    <SkillBadge name="Node" level="3" color="bg-green-500" />
+                </div>
+                
+                <div className="mt-8 bg-black bg-opacity-50 p-4 border border-gray-700">
+                    <div className="flex justify-between items-center text-xs text-gray-400 uppercase font-bold mb-2">
+                        <span>Action Skill</span>
+                        <span className="text-cyan-400">Ready</span>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="w-12 h-12 bg-cyan-400 border-2 border-white rounded-full flex items-center justify-center text-black font-bold text-2xl mr-4 animate-pulse">
+                            ⚛
+                        </div>
+                        <div>
+                            <div className="text-white font-bold uppercase">Component Synthesis</div>
+                            <div className="text-gray-400 text-xs">Instantly renders complex UIs with 0 lag.</div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        );
+
+        const ProjectsPage = () => (
+            <div className="h-full overflow-y-auto pr-2 pb-20">
+                <MissionCard 
+                    title="E-Commerce Dashboard" 
+                    type="Story Mission"
+                    difficulty={5} 
+                    rewards="999,999"
+                    description="A massive React admin panel. Handled global state with Redux Toolkit and visualized sales data with D3.js."
+                />
+                <MissionCard 
+                    title="3D Product Configurator" 
+                    type="Side Quest"
+                    difficulty={3} 
+                    rewards="5,000"
+                    description="Interactive car color changer using Three.js and React Fiber. Optimized shaders for mobile."
+                />
+                <MissionCard 
+                    title="Social Graph API" 
+                    type="Rare Drop"
+                    difficulty={4} 
+                    rewards="250 XP"
+                    description="Backend service built with Node.js and GraphQL. Handles millions of requests per second (allegedly)."
+                />
+            </div>
+        );
+
+        // --- MAIN APP ---
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('about');
+            const [booted, setBooted] = useState(false);
+
+            // Intro sequence
+            useEffect(() => {
+                const timer = setTimeout(() => setBooted(true), 1500);
+                return () => clearTimeout(timer);
+            }, []);
+
+            if (!booted) {
+                return (
+                    <div className="h-screen w-screen bg-black flex items-center justify-center flex-col">
+                        <div className="text-5xl font-comic text-yellow-400 mb-4 animate-bounce">LOADING ECHO...</div>
+                        <div className="w-64 h-4 bg-gray-800 border-2 border-white overflow-hidden rounded">
+                            <div className="h-full bg-cyan-400 animate-[width_1.5s_ease-out_forwards] w-0"></div>
+                        </div>
+                        <div className="mt-2 text-green-500 font-mono text-xs">Digistructing UI modules...</div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="h-screen w-screen bg-black overflow-hidden relative selection:bg-yellow-400 selection:text-black">
+                    {/* Background Grid/Effect */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(18,18,18,0.9),rgba(18,18,18,0.9)),url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-50 z-0"></div>
+                    
+                    {/* Main Layout Grid */}
+                    <div className="relative z-10 h-full w-full max-w-7xl mx-auto flex flex-col md:flex-row p-4 gap-4">
+                        
+                        {/* LEFT: 3D CHARACTER / AVATAR AREA */}
+                        <div className="hidden md:flex flex-col w-1/3 h-full">
+                            <div className="flex-1 bg-gray-900 border-4 border-black relative overflow-hidden shadow-[10px_10px_0px_rgba(25,25,25,1)]">
+                                
+                                <div className="absolute top-4 left-4 z-20 border-4 border-black bg-white p-1 transform -rotate-3 shadow-[4px_4px_0px_rgba(0,0,0,0.5)]">
+            <img 
+                src="./kekeland.png" 
+                alt="Vault Hunter Face" 
+                className="w-32 h-32 object-cover" 
+            />
+        </div>
+                                {/* The 3D Scene */}
+                                <div className="absolute inset-0 z-0">
+                                    <ThreeScene />
+                                </div>
+                                
+                                {/* Overlay UI on top of 3D */}
+                                <div className="absolute bottom-0 w-full bg-gradient-to-t from-black to-transparent p-4 z-10">
+                                    <h1 className="text-4xl font-comic text-yellow-400 text-shadow-comic leading-none">
+                                        Krste<br/>DEV
+                                    </h1>
+                                    <div className="h-2 w-24 bg-cyan-400 my-2"></div>
+                                    <div className="text-white text-xs font-bold uppercase tracking-widest">
+                                        Lvl 45 Frontend  <span className="lowercase text-white">&lt;br&gt;</span> zerker
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Status Bars */}
+                            <div className="mt-4 space-y-2">
+                                <div className="flex items-center">
+                                    <span className="w-12 text-xs font-bold text-red-500">HP</span>
+                                    <div className="flex-1 h-3 bg-red-900 border border-black transform skew-x-12">
+                                        <div className="h-full bg-red-500 w-full"></div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="w-12 text-xs font-bold text-cyan-400">SHIELD</span>
+                                    <div className="flex-1 h-3 bg-cyan-900 border border-black transform skew-x-12">
+                                        <div className="h-full bg-cyan-400 w-[60%] animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT: ECHO MENU INTERFACE */}
+                        <div className="flex-1 flex flex-col h-full relative">
+                            {/* Device Frame Top */}
+                            <div className="h-8 bg-gray-800 border-t-4 border-x-4 border-black flex justify-between px-4 items-center">
+                                <div className="text-yellow-500 text-xs font-bold tracking-[0.2em]">ECHOnet v4.2</div>
+                                <div className="flex gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-ping"></div>
+                                    <div className="text-xs text-red-500 font-bold">LIVE</div>
+                                </div>
+                            </div>
+
+                            {/* Main Content Area */}
+                            <div className="flex-1 bg-gray-800 border-4 border-black relative overflow-hidden flex flex-col">
+                                {/* Scanlines Overlay */}
+                                <div className="absolute inset-0 scanlines z-20"></div>
+
+                                {/* Tabs */}
+                                <div className="flex bg-gray-900 border-b-4 border-black p-2 gap-2 z-30">
+                                    <NavTab label="Character" active={activeTab === 'about'} onClick={() => setActiveTab('about')} />
+                                    <NavTab label="Skills" active={activeTab === 'skills'} onClick={() => setActiveTab('skills')} />
+                                    <NavTab label="Missions" active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} />
+                                </div>
+
+                                {/* Dynamic Content */}
+                                <div className="flex-1 p-6 overflow-y-auto relative z-10 bg-gradient-to-br from-gray-800 to-gray-900">
+                                    {activeTab === 'about' && <AboutPage />}
+                                    {activeTab === 'skills' && <SkillsPage />}
+                                    {activeTab === 'projects' && <ProjectsPage />}
+                                </div>
+
+                                {/* Bottom Info Bar */}
+                                <div className="h-12 bg-black flex items-center px-6 justify-between border-t-4 border-gray-700 z-30">
+                                    <div className="text-yellow-400 font-comic text-xl">$ 4,205,912</div>
+                                    <div className="flex gap-4 text-gray-500 text-xs font-bold uppercase">
+                                        <button className="hover:text-cyan-400 animate-glitch">Contact</button>
+                                        <button className="hover:text-cyan-400 animate-glitch">Map</button>
+                                        <button className="hover:text-cyan-400 animate-glitch">Inventory</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
 </html>
