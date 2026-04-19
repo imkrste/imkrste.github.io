@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Element One | Digital Innovation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        glass: "rgba(255, 255, 255, 0.05)",
+                        glassBorder: "rgba(255, 255, 255, 0.1)",
+                        neonBlue: "#00f3ff",
+                        neonPurple: "#bc13fe",
+                    },
+                    animation: {
+                        'scroll': 'scroll 40s linear infinite',
+                        'reel-up': 'scrollUp 40s linear infinite',
+                        'reel-down': 'scrollDown 45s linear infinite',
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        scroll: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        scrollUp: {
+                            '0%': { transform: 'translateY(0)' },
+                            '100%': { transform: 'translateY(-50%)' },
+                        },
+                        scrollDown: {
+                            '0%': { transform: 'translateY(-50%)' },
+                            '100%': { transform: 'translateY(0)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: none;
+            border-right: none;
+        }
+        
+        /* Ensure specific borders when rounded */
+        .rounded-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* Stylized Dot */
+        .brand-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(45deg, #00f3ff, #bc13fe);
+            border-radius: 50%;
+            margin-left: 2px;
+            box-shadow: 0 0 10px #00f3ff;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+       /* Optimized Accordion Transition */
+.accordion-item {
+    /* 1. Faster duration (0.4s) 
+       2. Custom Bezier: Starts fast, decelerates smoothly (The "Apple" feel)
+    */
+    transition: flex 0.4s cubic-bezier(0.25, 0.75, 0.5, 1.25);
+    /* 3. Performance hint for the browser */
+    will-change: flex;
+}
+
+.accordion-item:hover, 
+.accordion-item.active {
+    flex: 3;
+}
+
+.accordion-content {
+    opacity: 0;
+    transform: translateY(10px);
+    /* 4. Use max-height instead of height. 
+       'height: auto' cannot be animated, but 'max-height' can.
+    */
+    max-height: 0;
+    overflow: hidden;
+    /* Speed up the text reveal to match the new flex speed */
+    transition: all 0.3s ease-out;
+}
+
+.accordion-item:hover .accordion-content,
+.accordion-item.active .accordion-content {
+    opacity: 1;
+    transform: translateY(0);
+    /* Set a safe limit that exceeds your content size */
+    max-height: 500px; 
+    /* Slight delay creates a "staggered" premium effect */
+    transition-delay: 0.1s;
+}
+        
+        /* Reel Images Gradient Mask and Styling */
+        .reel-container {
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        }
+        .reel-img {
+            @apply rounded-lg border border-white/10 object-cover w-full h-full opacity-80 hover:opacity-100 transition-opacity duration-500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Text Overlay Gradient for Accordion */
+        .overlay-gradient-top {
+             background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        }
+
+        /* New Process Section Styles */
+        .process-step {
+            @apply relative pl-12 pb-12 border-l-2 border-white/10 last:border-0;
+        }
+        .process-step::before {
+            content: '';
+            @apply absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-black border-2 border-neonBlue;
+        }
+        .process-step:hover::before {
+            @apply bg-neonBlue shadow-[0_0_15px_rgba(0,243,255,0.5)];
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+    <div id="nav-inner" class="transition-all duration-500 ease-in-out px-6 py-4 flex justify-between items-center bg-transparent mx-4 mt-4 rounded-2xl max-w-7xl mx-auto border border-transparent relative z-50">
+        
+        <a href="#" class="text-2xl font-bold tracking-wider font-mono flex items-baseline">
+            ELMNT<span class="brand-dot"></span>
+        </a>
+        
+        <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+            <a href="#services" class="hover:text-neonBlue transition-colors">Services</a>
+            <a href="#clients" class="hover:text-neonBlue transition-colors">Clients</a>
+            <a href="#process" class="hover:text-neonBlue transition-colors">Process</a>
+            <a href="team.html" class="hover:text-neonBlue transition-colors">Our Team</a>
+            <a href="#contact" class="hover:text-neonBlue transition-colors">Contact</a>
+        </div>
+        
+        <button class="hidden md:block bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-neonBlue hover:text-black transition-all duration-300 hover:shadow-lg hover:shadow-neonBlue/30">
+            Start Project
+        </button>
+
+        <button id="mobile-menu-btn" class="md:hidden text-white text-2xl p-2 rounded-lg hover:bg-white/10 transition focus:outline-none">
+            <i class="fas fa-bars transition-transform duration-300" id="mobile-icon"></i>
+        </button>
+    </div>
+
+    <div id="mobile-menu" class="absolute top-full left-0 w-full px-4 pt-2 md:hidden transition-all duration-300 ease-out origin-top transform scale-y-0 opacity-0 invisible">
+        <div class="glass-panel rounded-2xl p-8 flex flex-col space-y-6 text-center border border-white/10 shadow-2xl">
+            <a href="#services" class="text-lg text-gray-300 hover:text-neonBlue transition-colors mobile-link">Services</a>
+            <a href="#clients" class="text-lg text-gray-300 hover:text-neonBlue transition-colors mobile-link">Clients</a>
+            <a href="#process" class="text-lg text-gray-300 hover:text-neonBlue transition-colors mobile-link">Process</a>
+            <a href="team.html" class="text-lg text-gray-300 hover:text-neonBlue transition-colors mobile-link">Our Team</a>
+            <a href="#contact" class="text-lg text-gray-300 hover:text-neonBlue transition-colors mobile-link">Contact</a>
+            
+            <div class="w-full h-px bg-white/10"></div>
+            
+            <button class="w-full bg-white text-black px-6 py-4 rounded-xl font-bold text-lg hover:bg-neonBlue hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                Start Project
+            </button>
+        </div>
+    </div>
+</nav>
+
+    <section class="relative min-h-screen flex items-center overflow-hidden pt-20">
+        <div class="absolute inset-y-0 right-0 w-full lg:left-[45%] lg:w-[55%] grid grid-cols-3 gap-6 opacity-30 lg:opacity-50 transform rotate-[25deg] scale-110 reel-container pointer-events-none px-4">
+            <div class="flex flex-col gap-6 animate-reel-up">
+                <div class="h-64"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Analytics"></div>
+                <div class="h-96"><img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Code"></div>
+                <div class="h-64"><img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Mobile App"></div>
+                <div class="h-96"><img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Wireframe"></div>
+                <div class="h-64"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Analytics"></div>
+            </div>
+            <div class="flex flex-col gap-6 animate-reel-down mt-20">
+                <div class="h-80"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Ecommerce"></div>
+                <div class="h-64"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Startup"></div>
+                <div class="h-80"><img src="https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Tablet Design"></div>
+                <div class="h-64"><img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Tech"></div>
+                <div class="h-80"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Ecommerce"></div>
+            </div>
+            <div class="flex flex-col gap-6 animate-reel-up">
+                <div class="h-72"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Data"></div>
+                <div class="h-80"><img src="https://images.unsplash.com/photo-1558494949-efdeb6bf80d1?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Server"></div>
+                <div class="h-72"><img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Security"></div>
+                <div class="h-80"><img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Network"></div>
+                <div class="h-72"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" class="reel-img" alt="Data"></div>
+            </div>
+        </div>
+
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-neonBlue rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-blob"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neonPurple rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-blob animation-delay-2000"></div>
+
+        <div class="relative z-10 container mx-auto px-6">
+            <div class="max-w-3xl lg:w-1/2 text-left">
+                <h1 class="text-6xl md:text-8xl font-bold mb-6 tracking-tight leading-tight">
+                    Digital Products  <br />
+                    <span class=" bg-clip-text">Built Better.</span>
+                </h1>
+                
+                <p class="text-xl text-gray-300 mb-10 font-light leading-relaxed">
+                    We are element one. We build Cloud-native e-commerce shops and custom web solutions designed for speed, scale, and revenue.
+                </p>
+
+                <div class="flex flex-col md:flex-row justify-start gap-4">
+                    <a href="#contact" class="px-8 py-4 bg-white text-black rounded-lg font-bold hover:bg-neonBlue hover:text-black transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-neonBlue/50 text-center">
+                        Get Technical Audit
+                    </a>
+                    <a href="#services" class="px-8 py-4 glass-panel rounded-lg font-bold hover:bg-white/10 hover:border-white/30 transition-all text-center">
+                        See Our Solutions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 relative z-20 mt-10">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-8 rounded-3xl flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-40 transition-opacity">
+                        <i class="fas fa-palette text-6xl text-neonBlue"></i>
+                    </div>
+                    <div class="w-12 h-12 bg-neonBlue/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-paint-brush text-neonBlue text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Web Design</h3>
+                    <p class="text-gray-400 mb-6 flex-grow">Award-winning, user-centric interfaces designed to convert visitors into loyal customers.</p>
+                   
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-40 transition-opacity">
+                        <i class="fas fa-mobile-alt text-6xl text-purple-400"></i>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-400/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-code text-purple-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">App Dev</h3>
+                    <p class="text-gray-400 mb-6 flex-grow">High-performance native and cross-platform mobile applications for iOS & Android.</p>
+                    
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-40 transition-opacity">
+                        <i class="fas fa-cloud text-6xl text-pink-400"></i>
+                    </div>
+                    <div class="w-12 h-12 bg-pink-400/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-server text-pink-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Cloud Native</h3>
+                    <p class="text-gray-400 mb-6 flex-grow">Scalable, serverless architectures integrated with AWS, Azure, and GCP.</p>
+                    
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-40 transition-opacity">
+                        <i class="fas fa-brain text-6xl text-green-400"></i>
+                    </div>
+                    <div class="w-12 h-12 bg-green-400/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-robot text-green-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">AI Integration</h3>
+                    <p class="text-gray-400 mb-6 flex-grow">Neural networks and machine learning models seamlessly integrated into your business logic.</p>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-24 bg-black relative z-20">
+        <div class="container mx-auto px-6 mb-12 text-center">
+            <h2 class="text-4xl font-bold mb-4">Our Expertise</h2>
+            <div class="w-20 h-1 bg-neonBlue mx-auto"></div>
+        </div>
+
+        <div class="flex flex-col md:flex-row h-[85vh] md:h-[50vh] w-full max-w-[90rem] mx-auto gap-2 px-4">
+            
+            <div class="accordion-item relative flex-1 bg-gray-900 rounded-3xl overflow-hidden border-2 border-black cursor-pointer group bg-[url('https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80')] bg-cover bg-center">
+                <div class="absolute inset-0 overlay-gradient-top group-hover:bg-black/40 transition-all duration-500"></div>
+                <div class="absolute top-0 left-0 p-8 w-full">
+                    <h3 class="text-3xl font-bold text-white mb-0 group-hover:text-neonBlue transition-colors writing-mode-vertical md:writing-mode-horizontal origin-top-left truncate">Web Design</h3>
+                    <div class="accordion-content">
+                        <p class="text-gray-100 text-lg font-medium leading-relaxed">Award-winning, user-centric interfaces designed to convert visitors into loyal customers.</p>
+                        <ul class="mt-6 text-sm text-gray-300 space-y-3">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>UI/UX Research & Strategy</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>High-Fidelity Prototyping</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Mobile-First Responsive Architecture</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>WCAG Accessibility Compliance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item relative flex-1 bg-gray-900 rounded-3xl overflow-hidden border-2 border-black cursor-pointer group bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center">
+                <div class="absolute inset-0 overlay-gradient-top group-hover:bg-black/40 transition-all duration-500"></div>
+                <div class="absolute top-0 left-0 p-8 w-full">
+                    <h3 class="text-3xl font-bold text-white mb-0 group-hover:text-neonBlue transition-colors truncate">SEO</h3>
+                    <div class="accordion-content">
+                        <p class="text-gray-100 text-lg font-medium leading-relaxed">Data-driven strategies to dominate search rankings and drive sustainable organic traffic.</p>
+                        <ul class="mt-6 text-sm text-gray-300 space-y-3">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Technical & On-Page Audits</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Content Authority Strategy</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Local & Regional SEO Optimization</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Backlink Profile Management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item relative flex-1 bg-gray-900 rounded-3xl overflow-hidden border-2 border-black cursor-pointer group bg-[url('https://images.unsplash.com/photo-1586880244386-8b3e34c8382c?auto=format&fit=crop&q=80')] bg-cover bg-center">
+                <div class="absolute inset-0 overlay-gradient-top group-hover:bg-black/40 transition-all duration-500"></div>
+                <div class="absolute top-0 left-0 p-8 w-full">
+                    <h3 class="text-3xl font-bold text-white mb-0 group-hover:text-neonBlue transition-colors truncate">eCommerce</h3>
+                    <div class="accordion-content">
+                        <p class="text-gray-100 text-lg font-medium leading-relaxed">Scalable online stores built for speed, security, and sales maximization.</p>
+                        <ul class="mt-6 text-sm text-gray-300 space-y-3">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Conversion Rate Optimization</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Seamless Payment Integration</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Inventory Management Sync</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Abandoned Cart Recovery Systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item relative flex-1 bg-gray-900 rounded-3xl overflow-hidden border-2 border-black cursor-pointer group bg-[url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80')] bg-cover bg-center">
+                <div class="absolute inset-0 overlay-gradient-top group-hover:bg-black/40 transition-all duration-500"></div>
+                <div class="absolute top-0 left-0 p-8 w-full">
+                    <h3 class="text-3xl font-bold text-white mb-0 group-hover:text-neonBlue transition-colors truncate">Cyber Security</h3>
+                    <div class="accordion-content">
+                        <p class="text-gray-100 text-lg font-medium leading-relaxed">Protecting your digital assets with enterprise-grade security protocols and proactive monitoring.</p>
+                        <ul class="mt-6 text-sm text-gray-300 space-y-3">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Penetration Testing & Audits</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Cloud Infrastructure Security</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Real-time DDoS Mitigation</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>GDPR & CCPA Data Compliance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item relative flex-1 bg-gray-900 rounded-3xl overflow-hidden border-2 border-black cursor-pointer group bg-[url('https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-left">
+                <div class="absolute inset-0 overlay-gradient-top group-hover:bg-black/40 transition-all duration-500"></div>
+                <div class="absolute top-0 left-0 p-8 w-full">
+                    <h3 class="text-3xl font-bold text-white mb-0 group-hover:text-neonBlue transition-colors truncate">App Dev</h3>
+                    <div class="accordion-content">
+                        <p class="text-gray-100 text-lg font-medium leading-relaxed">High-performance native and cross-platform mobile applications that users love.</p>
+                        <ul class="mt-6 text-sm text-gray-300 space-y-3">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>iOS & Android Native</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Flutter & React Native Solutions</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>Custom API Development & Integration</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-neonBlue mr-3"></i>App Store Optimization (ASO)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 relative border-t border-white/5 bg-[#0a0a0a]">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-6">CMS Flexibility</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-16 text-lg">
+                While we specialize in developing robust <span class="text-white font-bold">Custom CMS</span> architectures tailored to your specific needs, we are also experts in deploying and customizing the world's leading platforms.
+            </p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center hover:bg-white/5 transition duration-300 group">
+                    <i class="fas fa-layer-group text-5xl text-neonBlue mb-6 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-bold text-lg">Custom CMS</span>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center hover:bg-white/5 transition duration-300 group">
+                    <i class="fab fa-wordpress-simple text-5xl text-white mb-6 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-bold text-lg">WordPress</span>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center hover:bg-white/5 transition duration-300 group">
+                    <i class="fab fa-shopify text-5xl text-[#96bf48] mb-6 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-bold text-lg">Shopify</span>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center hover:bg-white/5 transition duration-300 group">
+                    <i class="fab fa-magento text-5xl text-[#f26322] mb-6 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-bold text-lg">Magento</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="clients" class="py-16 bg-black border-y border-white/10 overflow-hidden relative z-10">
+    <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-20 pointer-events-none"></div>
+
+    <div class="flex overflow-hidden">
+        
+        <div class="flex shrink-0 animate-scroll whitespace-nowrap gap-24 pr-24 items-center">
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-mono">UNDP</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-mono">АГЕНЦИЈА ЗА МЛАДИ И СПОРТ</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-red-500 transition cursor-default font-sans italic">RedBull</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans uppercase tracking-tighter">NIKE</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-mono uppercase">Burton</span>
+            <span class="text-2xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans">NeverSummer Snowboards</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-blue-400 transition cursor-default font-sans">Tinex</span>
+            <span class="text-2xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans">Municipality of Aerodrom</span>
+            <span class="text-2xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans">Municipality of Strumica</span>
+        </div>
+
+        <div class="flex shrink-0 animate-scroll whitespace-nowrap gap-24 pr-24 items-center" aria-hidden="true">
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-mono">UNDP</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-mono">АГЕНЦИЈА ЗА МЛАДИ И СПОРТ</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-red-500 transition cursor-default font-sans italic">RedBull</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans uppercase tracking-tighter">NIKE</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-white transition cursor-default font-mono uppercase">Burton</span>
+            <span class="text-2xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans">NeverSummer Snowboards</span>
+            <span class="text-3xl font-bold text-gray-600 hover:text-blue-400 transition cursor-default font-sans">Tinex</span>
+            <span class="text-2xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans">Municipality of Aerodrom</span>
+            <span class="text-2xl font-bold text-gray-600 hover:text-white transition cursor-default font-sans">Municipality of Strumica</span>
+        </div>
+        
+    </div>
+</section>
+
+    <section id="process" class="py-32 relative overflow-hidden bg-[#050505]">
+        <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-neonBlue/5 rounded-full filter blur-[120px] opacity-30"></div>
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neonPurple/5 rounded-full filter blur-[120px] opacity-30"></div>
+
+        <div class="container mx-auto px-6 relative z-10 max-w-4xl">
+            <div class="mb-20 text-center">
+                <h2 class="text-5xl font-bold mb-6">Our Proven Process</h2>
+                <p class="text-xl text-gray-400 max-w-xl mx-auto">From strategy to launch, we follow a proven roadmap to ensure digital success.</p>
+            </div>
+
+            <div class="space-y-12">
+                <div class="process-step group">
+                    <span class="text-6xl font-bold text-neonBlue/20 absolute -top-8 right-0 z-0">01</span>
+                    <h3 class="text-3xl font-bold text-white mb-4 relative z-10 group-hover:text-neonBlue transition-colors">Web Strategy</h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed relative z-10">We use in-depth research and analysis to build a step-by-step plan that expands your digital presence.</p>
+                    <ul class="space-y-3 relative z-10">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Identify your target audiences</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Analyze user pain-points & define your UVPs</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Define key performance indicators (KPIs) & Growth Roadmap</li>
+                    </ul>
+                </div>
+
+                <div class="process-step group">
+                    <span class="text-6xl font-bold text-neonBlue/20 absolute -top-8 right-0 z-0">02</span>
+                    <h3 class="text-3xl font-bold text-white mb-4 relative z-10 group-hover:text-neonBlue transition-colors">Planning & Information Architecture</h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed relative z-10">We utilize proven techniques to map your content, meet user intentions and create an engaging user experience.</p>
+                    <ul class="space-y-3 relative z-10">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Develop a base-level user flow & sitemap</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Utilize wireframing to create a seamless conversion funnel</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Add on-brand, consistent messaging to your structure</li>
+                    </ul>
+                </div>
+
+                <div class="process-step group">
+                    <span class="text-6xl font-bold text-neonBlue/20 absolute -top-8 right-0 z-0">03</span>
+                    <h3 class="text-3xl font-bold text-white mb-4 relative z-10 group-hover:text-neonBlue transition-colors">Creative Design</h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed relative z-10">This stage is where you will see your site come to life. Our designers implement your unique branding elements.</p>
+                    <ul class="space-y-3 relative z-10">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Thoughtfully place design features to guide the user journey</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Utilize interactive videos & animations</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Create custom, branded illustrations</li>
+                    </ul>
+                </div>
+
+                <div class="process-step group">
+                    <span class="text-6xl font-bold text-neonBlue/20 absolute -top-8 right-0 z-0">04</span>
+                    <h3 class="text-3xl font-bold text-white mb-4 relative z-10 group-hover:text-neonBlue transition-colors">Responsive Development</h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed relative z-10">A responsive website is fast, accessible and easy to navigate, automatically scaling to various screen sizes.</p>
+                    <ul class="space-y-3 relative z-10">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Gather touchpoint & user-channel insights</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Transform your wireframes into a flexible UI</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Test across devices before approval & launch</li>
+                    </ul>
+                </div>
+
+                <div class="process-step group">
+                    <span class="text-6xl font-bold text-neonBlue/20 absolute -top-8 right-0 z-0">05</span>
+                    <h3 class="text-3xl font-bold text-white mb-4 relative z-10 group-hover:text-neonBlue transition-colors">Quality Assurance (QA)</h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed relative z-10">We pride ourselves on delivering measurable results. By following a strict QA protocol, we guarantee quality.</p>
+                    <ul class="space-y-3 relative z-10">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Actively involve our clients throughout every project</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Meticulously test all designs to catch errors</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Use tried-and-tested tools to secure before launch</li>
+                    </ul>
+                </div>
+
+                <div class="process-step group">
+                    <span class="text-6xl font-bold text-neonBlue/20 absolute -top-8 right-0 z-0">06</span>
+                    <h3 class="text-3xl font-bold text-white mb-4 relative z-10 group-hover:text-neonBlue transition-colors">Launch & Optimization</h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed relative z-10">Our end-to-end services cover both launch and post-launch support, monitoring and optimizing your site.</p>
+                    <ul class="space-y-3 relative z-10">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Following a strict protocol for every website launch</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Offering post-launch maintenance & optimization</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-check text-neonBlue mr-3"></i> Creating a digital marketing plan to drive awareness</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 relative">
+        <div class="container mx-auto px-6 max-w-4xl relative z-10">
+            <div class="glass-panel p-12 rounded-3xl text-center border-t border-neonBlue/30 shadow-[0_0_50px_rgba(0,243,255,0.1)]">
+                <h2 class="text-5xl font-bold mb-6">Ready to Disrupt?</h2>
+                <p class="text-gray-300 mb-10 text-lg max-w-2xl mx-auto">Whether you need a custom CMS, a cyber-secure platform, or a complete digital overhaul, Element One is your partner in digital dominance.</p>
+                <form class="space-y-6 max-w-xl mx-auto text-left">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-2 font-mono">FULL NAME</label>
+                            <input type="text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-neonBlue focus:bg-white/10 focus:outline-none transition placeholder-gray-600" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-2 font-mono">EMAIL ADDRESS</label>
+                            <input type="email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-neonBlue focus:bg-white/10 focus:outline-none transition placeholder-gray-600" placeholder="john@company.com">
+                        </div>
+                    </div>
+                    <div>
+                         <label class="block text-xs text-gray-400 mb-2 font-mono">I'M INTERESTED IN...</label>
+                        <select class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-neonBlue focus:outline-none transition appearance-none cursor-pointer">
+                            <option>Custom Web Design</option>
+                            <option>Mobile App Development</option>
+                            <option>Cyber Security Solutions</option>
+                            <option>SEO & Marketing Strategy</option>
+                             <option>eCommerce Platform</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-2 font-mono">PROJECT DETAILS</label>
+                        <textarea rows="5" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-neonBlue focus:bg-white/10 focus:outline-none transition placeholder-gray-600" placeholder="Tell us about your goals, timeline, and budget..."></textarea>
+                    </div>
+                    <button class="w-full bg-gradient-to-r from-neonBlue via-purple-500 to-pink-500 text-white font-bold py-5 rounded-lg hover:shadow-[0_0_30px_rgba(188,19,254,0.5)] transition-all duration-300 text-lg tracking-wider">INITIATE SEQUENCE</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#080808] border-t border-white/10 pt-20 pb-10 relative overflow-hidden">
+         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[1000px] h-[300px] bg-neonBlue/5 rounded-full filter blur-[150px] pointer-events-none"></div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="text-4xl font-bold font-mono mb-6 flex items-baseline">
+                        ELMNT<span class="brand-dot"></span>
+                    </div>
+                    <p class="text-gray-400 mb-8 leading-relaxed">Merging aesthetic perfection with technical dominance to create defining digital experiences.</p>
+                    <div class="flex space-x-5 text-gray-400">
+                        <a href="#" class="hover:text-neonBlue transition-colors p-2 glass-panel rounded-full"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-neonBlue transition-colors p-2 glass-panel rounded-full"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="hover:text-neonBlue transition-colors p-2 glass-panel rounded-full"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-neonBlue transition-colors p-2 glass-panel rounded-full"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 font-mono uppercase tracking-wider text-sm">Services</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-neonBlue transition">Web Design & UI/UX</a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition">App Development</a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition">eCommerce Solutions</a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition">Cyber Security</a></li>
+                         <li><a href="#" class="hover:text-neonBlue transition">SEO & Growth</a></li>
+                    </ul>
+                </div>
+
+                 <div>
+                    <h4 class="text-white font-bold mb-6 font-mono uppercase tracking-wider text-sm">Company</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#process" class="hover:text-neonBlue transition">Our Process</a></li>
+                        <li><a href="#clients" class="hover:text-neonBlue transition">Clients & Partners</a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition">Careers <span class="text-xs bg-neonPurple/20 text-neonPurple px-2 py-0.5 rounded-full ml-2">We're Hiring</span></a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition">Case Studies</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 font-mono uppercase tracking-wider text-sm">Get in touch</h4>
+                    <ul class="space-y-4 text-gray-400 mb-8">
+                        <li class="flex items-center"><i class="far fa-envelope text-neonBlue mr-3"></i> hello@3lement.one</li>
+                        <li class="flex items-start"><i class="fas fa-map-marker-alt text-neonBlue mr-3 mt-1"></i> 123 Digital Ave, Tech City<br>MK, 1000</li>
+                    </ul>
+                    
+                    <h5 class="text-white font-bold mb-4 font-mono text-sm">Stay Updated</h5>
+                    <div class="flex glass-panel p-1 rounded-lg">
+                        <input type="email" placeholder="Enter your email" class="bg-transparent border-none focus:ring-0 text-sm text-white placeholder-gray-500 flex-grow px-3">
+                        <button class="bg-neonBlue/20 text-neonBlue p-2 rounded-md hover:bg-neonBlue hover:text-black transition"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+                <div class="mb-4 md:mb-0">
+                    &copy; 2025 Element One. All rights reserved.
+                </div>
+                <div class="flex space-x-8">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                    <a href="https://3lement.one" class="text-neonBlue/80 hover:text-neonBlue transition font-mono">3lement.one</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // 1. Navbar Scroll Logic
+    window.addEventListener('scroll', function() {
+        const navbarInner = document.getElementById('nav-inner');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (window.scrollY > 20) {
+            // SCROLLED STATE: Full Width, Glassy
+            navbarInner.classList.remove('mx-4', 'mt-4', 'rounded-2xl', 'bg-transparent', 'border-transparent', 'max-w-7xl');
+            navbarInner.classList.add('glass-panel', 'mx-0', 'mt-0', 'rounded-none', 'w-full', 'max-w-full');
+            
+            // Adjust mobile menu padding to match
+            mobileMenu.classList.remove('px-4');
+            mobileMenu.classList.add('px-0');
+        } else {
+            // TOP STATE: Floating, Rounded
+            navbarInner.classList.remove('glass-panel', 'mx-0', 'mt-0', 'rounded-none', 'w-full', 'max-w-full');
+            navbarInner.classList.add('bg-transparent', 'mx-4', 'mt-4', 'rounded-2xl', 'max-w-7xl', 'border-transparent');
+            
+            // Reset mobile menu padding
+            mobileMenu.classList.remove('px-0');
+            mobileMenu.classList.add('px-4');
+        }
+    });
+
+    // 2. Accordion Functionality
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+        item.addEventListener('click', () => {
+            accordionItems.forEach(otherItem => {
+                if (otherItem !== item) otherItem.classList.remove('active');
+            });
+            item.classList.toggle('active');
+        });
+    });
+
+    // 3. Mobile Menu Toggle Logic
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('mobile-icon');
+    const links = document.querySelectorAll('.mobile-link');
+
+    btn.addEventListener('click', () => {
+        // Toggle Menu Visibility
+        if (menu.classList.contains('invisible')) {
+            // OPEN
+            menu.classList.remove('invisible', 'scale-y-0', 'opacity-0');
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times', 'rotate-90');
+        } else {
+            // CLOSE
+            menu.classList.add('invisible', 'scale-y-0', 'opacity-0');
+            icon.classList.remove('fa-times', 'rotate-90');
+            icon.classList.add('fa-bars');
+        }
+    });
+
+    // Auto-close menu when a link is clicked
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            menu.classList.add('invisible', 'scale-y-0', 'opacity-0');
+            icon.classList.remove('fa-times', 'rotate-90');
+            icon.classList.add('fa-bars');
+        });
+    });
+</script>
+</body>
+</html>

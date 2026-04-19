@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwarzkopf Professional GIVEAWAY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent-color: #4f46e5;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-primary);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 { text-align: center; margin: 0 0 20px 0; font-size: 2.5rem; }
+
+        /* View Toggle Controls */
+        .view-controls {
+            display: flex;
+            background: #e5e7eb;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .view-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-btn.active {
+            background-color: white;
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .view-btn:hover:not(.active) {
+            background-color: rgba(255,255,255,0.5);
+        }
+
+        /* Grid Layout (Default) */
+        #directory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative; /* Needed for absolute positioning of number */
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        /* Sequential Number Styling */
+        .seq-number {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 0.85rem;
+            color: #9ca3af;
+            font-weight: 700;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .avatar {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: white; font-weight: bold;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+            margin-top: 10px; /* Space for the absolute number */
+        }
+
+        .user-info { width: 100%; } 
+
+        .name { font-size: 1.25rem; margin: 0 0 4px 0; font-weight: 700; }
+        .email-text { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; word-break: break-all; }
+
+        .actions { margin-top: auto; display: flex; gap: 10px; width: 100%; }
+        .btn {
+            flex: 1; padding: 10px; border-radius: 8px; text-decoration: none;
+            font-weight: 600; font-size: 0.9rem; display: flex;
+            align-items: center; justify-content: center; gap: 8px;
+            white-space: nowrap;
+        }
+        .btn-email { background-color: #eff6ff; color: var(--accent-color); }
+        .btn-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+        .btn:hover { opacity: 0.9; }
+
+        /* --- LIST VIEW OVERRIDES --- */
+        #directory-grid.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        #directory-grid.list-view .card {
+            flex-direction: row;
+            text-align: left;
+            align-items: center;
+            padding: 16px 24px;
+        }
+
+        /* Move number to inline for list view */
+        #directory-grid.list-view .seq-number {
+            position: static;
+            background: none;
+            padding: 0;
+            margin-right: 15px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            width: 30px; /* Fixed width for alignment */
+        }
+
+        #directory-grid.list-view .avatar {
+            width: 50px; height: 50px;
+            font-size: 20px;
+            margin-bottom: 0;
+            margin-top: 0;
+            margin-right: 20px;
+        }
+
+        #directory-grid.list-view .user-info {
+            flex: 1;
+            margin-right: 20px;
+        }
+        
+        #directory-grid.list-view .email-text {
+            margin-bottom: 0;
+        }
+
+        #directory-grid.list-view .actions {
+            width: auto;
+            margin-top: 0;
+        }
+
+        #directory-grid.list-view .btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 640px) {
+            #directory-grid.list-view .card {
+                flex-direction: column;
+                text-align: center;
+                position: relative;
+            }
+            #directory-grid.list-view .seq-number {
+                position: absolute;
+                top: 10px; left: 10px;
+                width: auto;
+            }
+            #directory-grid.list-view .avatar {
+                margin-right: 0;
+                margin-bottom: 12px;
+                margin-top: 10px;
+            }
+            #directory-grid.list-view .user-info {
+                margin-right: 0;
+                margin-bottom: 16px;
+            }
+            #directory-grid.list-view .actions {
+                width: 100%;
+            }
+        }
+
+        .status { grid-column: 1 / -1; text-align: center; padding: 20px; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>Schwarzkopf Professional GIVEAWAY</h1>
+            
+            <div class="view-controls">
+                <button class="view-btn active" id="btn-grid" onclick="switchView('grid')">
+                    <i class="fa-solid fa-border-all"></i> Grid
+                </button>
+                <button class="view-btn" id="btn-list" onclick="switchView('list')">
+                    <i class="fa-solid fa-list"></i> List
+                </button>
+            </div>
+        </div>
+        
+        <div id="directory-grid">
+            <div class="status">Loading data...</div>
+        </div>
+    </div>
+
+    <script>
+        const CSV_FILE_URL = 'data.csv?v=' + new Date().getTime();
+
+        // --- View Switching Logic ---
+        function switchView(viewType) {
+            const grid = document.getElementById('directory-grid');
+            const btnGrid = document.getElementById('btn-grid');
+            const btnList = document.getElementById('btn-list');
+
+            if (viewType === 'list') {
+                grid.classList.add('list-view');
+                btnList.classList.add('active');
+                btnGrid.classList.remove('active');
+            } else {
+                grid.classList.remove('list-view');
+                btnGrid.classList.add('active');
+                btnList.classList.remove('active');
+            }
+        }
+
+        // --- Data Helpers ---
+        function getInstagramLink(input) {
+            if (!input) return null;
+            const clean = input.trim();
+            if (clean.length < 2) return null; 
+            if (clean.startsWith('http')) return clean;
+            return `https://www.instagram.com/${clean.replace(/^@/, '')}`;
+        }
+
+        function getInitials(name) {
+            return (name || '?').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+        }
+
+        // --- CSV Parsing ---
+        Papa.parse(CSV_FILE_URL, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            quoteChar: '"', 
+            complete: function(results) {
+                const grid = document.getElementById('directory-grid');
+                grid.innerHTML = ''; 
+
+                // Check if Data exists
+                if(results.data.length === 0) {
+                    grid.innerHTML = '<div class="status">No valid data found. Check your CSV format.</div>';
+                    return;
+                }
+
+                let displayIndex = 1; // Counter for sequential numbering
+
+                // Render Cards
+                results.data.forEach(person => {
+                    const name = person['ime'] || person['"ime"'] || 'Unknown';
+                    const email = person['email'];
+                    const instagram = person['instagram'];
+
+                    if (!name && !email && !instagram) return;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    const instaLink = getInstagramLink(instagram);
+                    
+                    card.innerHTML = `
+                        <div class="seq-number">#${displayIndex}</div>
+                        <div class="avatar">${getInitials(name)}</div>
+                        
+                        <div class="user-info">
+                            <h2 class="name">${name.replace(/"/g, '')}</h2> 
+                            <div class="email-text">${email || ''}</div>
+                        </div>
+                        
+                        <div class="actions">
+                            ${email ? `<a href="mailto:${email}" class="btn btn-email"><i class="fa-regular fa-envelope"></i> Email</a>` : ''}
+                            ${instaLink ? `<a href="${instaLink}" target="_blank" class="btn btn-insta"><i class="fa-brands fa-instagram"></i> Instagram</a>` : ''}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    displayIndex++;
+                });
+            },
+            // Removed error callback processing to suppress parsing errors
+            error: function(err) {
+                console.log("Parsing error suppressed", err);
+            }
+        });
+    </script>
+</body>
+</html>

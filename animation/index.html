@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complex Three.js Chip Schematic with Text</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #ffffff; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// --- Setup Scene ---
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffffff);
+
+const aspect = window.innerWidth / window.innerHeight;
+const frustumSize = 130; 
+const camera = new THREE.OrthographicCamera(
+    frustumSize * aspect / -2,
+    frustumSize * aspect / 2,
+    frustumSize / 2,
+    frustumSize / -2,
+    0.1,
+    1000
+);
+camera.position.z = 10;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// --- Materials & Geometries ---
+const blackLineMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 1 });
+const blackFillMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+const whiteFillMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const impulseMat = new THREE.MeshBasicMaterial({ 
+    color: 0x00ffff, 
+    transparent: true, 
+    opacity: 0.8 
+});
+
+const nodeOuterRadius = 1.6;
+const nodeInnerRadius = 1.1;
+const nodeGeo = new THREE.RingGeometry(nodeInnerRadius, nodeOuterRadius, 32);
+const pinGeo = new THREE.PlaneGeometry(1.2, 1.2);
+const impulseGeo = new THREE.CircleGeometry(0.9, 16);
+
+
+// --- Helper: Calculate point on circle border ---
+function getPointOnCircleBorder(centerPt, nextPt, radius) {
+    const dir = new THREE.Vector3().subVectors(nextPt, centerPt).normalize();
+    // Subtract a tiny bit (0.05) so it sits just nicely inside the black border ring boundary
+    return centerPt.clone().add(dir.multiplyScalar(radius - 0.05));
+}
+
+// --- Helper: Create Text Mesh using Canvas Texture ---
+function createTextMesh(line1, line2) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    // Use power of 2 dimensions for textures generally, though less critical for 2D
+    const canvasW = 256;
+    const canvasH = 128;
+    canvas.width = canvasW;
+    canvas.height = canvasH;
+
+    // Text Styling to match technical look
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    // Using Courier New or monospace for schematic feel
+    const fontSize = 32;
+    ctx.font = `bold ${fontSize}px "Courier New", Courier, monospace`;
+
+    // Draw the text elements offset vertically from center
+    const verticalOffset = fontSize * 0.6;
+    ctx.fillText(line1, canvasW / 2, canvasH / 2 - verticalOffset);
+    ctx.fillText(line2, canvasW / 2, canvasH / 2 + verticalOffset);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    // Linear scaling ensures it looks sharp on the plane
+    texture.minFilter = THREE.LinearFilter; 
+
+    // Create mesh plane. Aspect ratio should match canvas aspect.
+    // Height of 14 fits nicely inside the 32 unit chip body.
+    const planeHeight = 14; 
+    const planeWidth = planeHeight * (canvasW / canvasH);
+    
+    const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true, // Important so canvas background is transparent
+    });
+
+    return new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeHeight), material);
+}
+
+
+// --- 1. Create the Central Chip ---
+const chipSize = 32; 
+const chipGroup = new THREE.Group();
+
+const chipBody = new THREE.Mesh(new THREE.PlaneGeometry(chipSize, chipSize), whiteFillMat);
+chipBody.position.z = -0.1; 
+
+const chipBorderGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(chipSize, chipSize));
+const chipBorder = new THREE.LineSegments(chipBorderGeo, blackLineMat);
+
+// -> ADDED: Create the text mesh and add it to the group
+const textMesh = createTextMesh('ELEMENT', 'ONE');
+// Place slightly in front of the chip body so it's visible
+textMesh.position.z = 0.01; 
+chipGroup.add(textMesh);
+
+chipGroup.add(chipBody);
+chipGroup.add(chipBorder);
+scene.add(chipGroup);
+
+
+// --- 2. Define Complex Paths ---
+const V = (x, y) => new THREE.Vector3(x, y, 0);
+const pathData = [
+    // Top Side
+    [V(-30, 60), V(-30, 40), V(-14, 25), V(-14, 16)],
+    [V(-20, 55), V(-20, 35), V(-10, 25), V(-10, 16)],
+    [V(-12, 48), V(-12, 30), V(-6, 22), V(-6, 16)],
+    [V(-4, 42), V(-4, 16)],
+    [V(4, 42), V(4, 16)],
+    [V(12, 48), V(12, 30), V(6, 22), V(6, 16)],
+    [V(20, 55), V(20, 35), V(10, 25), V(10, 16)],
+    [V(30, 60), V(30, 40), V(14, 25), V(14, 16)],
+    // Right Side
+    [V(60, 30), V(40, 30), V(25, 14), V(16, 14)],
+    [V(55, 20), V(35, 20), V(25, 10), V(16, 10)],
+    [V(48, 12), V(30, 12), V(22, 6), V(16, 6)],
+    [V(42, 4), V(16, 4)],
+    [V(42, -4), V(16, -4)],
+    [V(48, -12), V(30, -12), V(22, -6), V(16, -6)],
+    [V(55, -20), V(35, -20), V(25, -10), V(16, -10)],
+    [V(60, -30), V(40, -30), V(25, -14), V(16, -14)],
+    // Bottom Side
+    [V(-30, -60), V(-30, -40), V(-14, -25), V(-14, -16)],
+    [V(-20, -55), V(-20, -35), V(-10, -25), V(-10, -16)],
+    [V(-12, -48), V(-12, -30), V(-6, -22), V(-6, -16)],
+    [V(-4, -42), V(-4, -16)],
+    [V(4, -42), V(4, -16)],
+    [V(12, -48), V(12, -30), V(6, -22), V(6, -16)],
+    [V(20, -55), V(20, -35), V(10, -25), V(10, -16)],
+    [V(30, -60), V(30, -40), V(14, -25), V(14, -16)],
+    // Left Side
+    [V(-60, 30), V(-40, 30), V(-25, 14), V(-16, 14)],
+    [V(-55, 20), V(-35, 20), V(-25, 10), V(-16, 10)],
+    [V(-48, 12), V(-30, 12), V(-22, 6), V(-16, 6)],
+    [V(-42, 4), V(-16, 4)],
+    [V(-42, -4), V(-16, -4)],
+    [V(-48, -12), V(-30, -12), V(-22, -6), V(-16, -6)],
+    [V(-55, -20), V(-35, -20), V(-25, -10), V(-16, -10)],
+    [V(-60, -30), V(-40, -30), V(-25, -14), V(-16, -14)],
+];
+
+const impulses = [];
+
+pathData.forEach(rawPoints => {
+    // 1. Nodes & Pins
+    const node = new THREE.Mesh(nodeGeo, blackFillMat);
+    node.position.copy(rawPoints[0]);
+    node.position.z = -0.02; 
+    scene.add(node);
+
+    const pin = new THREE.Mesh(pinGeo, blackFillMat);
+    pin.position.copy(rawPoints[rawPoints.length - 1]);
+    scene.add(pin);
+
+    // 2. Calculate adjusted start point on border
+    const adjustedStartPt = getPointOnCircleBorder(rawPoints[0], rawPoints[1], nodeOuterRadius);
+    const linePoints = [adjustedStartPt, ...rawPoints.slice(1)];
+
+    // 3. Draw static line
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(linePoints);
+    const line = new THREE.Line(lineGeo, blackLineMat);
+    scene.add(line);
+
+    // 4. Animation Path & Impulse
+    const pathCurve = new THREE.CatmullRomCurve3(linePoints, false, 'catmullrom', 0.05);
+    const impulseMesh = new THREE.Mesh(impulseGeo, impulseMat);
+    scene.add(impulseMesh);
+
+    impulses.push({
+        mesh: impulseMesh,
+        curve: pathCurve,
+        progress: Math.random(), 
+        speed: 0.002 + Math.random() * 0.003 
+    });
+});
+
+
+// --- Animation Loop ---
+function animate() {
+    requestAnimationFrame(animate);
+    impulses.forEach(impData => {
+        impData.progress += impData.speed;
+        if (impData.progress > 1) impData.progress = 0;
+        const newPosition = impData.curve.getPointAt(impData.progress);
+        impData.mesh.position.copy(newPosition);
+    });
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const aspect = window.innerWidth / window.innerHeight;
+    camera.left = frustumSize * aspect / -2;
+    camera.right = frustumSize * aspect / 2;
+    camera.top = frustumSize / 2;
+    camera.bottom = frustumSize / -2;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
+
+</script>
+</body>
+</html>
