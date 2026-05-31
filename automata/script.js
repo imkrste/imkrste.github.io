@@ -2,17 +2,17 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const btn = document.getElementById("btn");
 
-// --- Configuration Variables ---
-const GRID_SIZE = 100; // Big enough for the highway
-const CELL_SIZE = 6;   // 6 pixels per cell
-canvas.width = GRID_SIZE * CELL_SIZE;  // 600px
-canvas.height = GRID_SIZE * CELL_SIZE; // 600px
-const STEPS_PER_FRAME = 10;
+
+const GRID_SIZE = 100; 
+const CELL_SIZE = 6;   
+canvas.width = GRID_SIZE * CELL_SIZE;  
+canvas.height = GRID_SIZE * CELL_SIZE; 
+const STEPS_PER_FRAME = 5;
 
 let steps = 0;
 let animationId = null;
 
-// Build the grid using the GRID_SIZE variable
+
 let grid = [];
 for (let i = 0; i < GRID_SIZE; i++) {
   grid[i] = [];
@@ -21,11 +21,11 @@ for (let i = 0; i < GRID_SIZE; i++) {
   }
 }
 
-// Start ant in the middle of the new grid
+
 let ant = { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2), dir: 0 };
 
 function draw() {
-  // Draw grid lines based on variables
+  
   for (let i = CELL_SIZE; i < canvas.height + CELL_SIZE; i = i + CELL_SIZE) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, i, canvas.width, 1);
@@ -38,13 +38,13 @@ function draw() {
 }
 
 function sim() {
-  // Run the logic multiple times instantly
+  
   for (let i = 0; i < STEPS_PER_FRAME; i++) {
     steps++;
       
     const currentCell = grid[ant.x][ant.y];
     
-    // Apply Rules
+   
     if (currentCell === 0) {
       ant.dir = (ant.dir + 1) % 4;
       grid[ant.x][ant.y] = 1;
@@ -55,28 +55,27 @@ function sim() {
       ctx.fillStyle = "white";
     }
 
-    // Draw the flipped cell (This also erases the magenta ant from the previous step!)
+   
     ctx.fillRect(ant.x * CELL_SIZE, ant.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
-    // Move
+   
     if (ant.dir === 0) ant.y--;      // Up
     else if (ant.dir === 1) ant.x++; // Right
     else if (ant.dir === 2) ant.y++; // Down
     else if (ant.dir === 3) ant.x--; // Left
 
-    // Wrap-around logic
+    
     ant.x = (ant.x + GRID_SIZE) % GRID_SIZE;
     ant.y = (ant.y + GRID_SIZE) % GRID_SIZE;
 
-    // Draw the ant's new position
+    
     ctx.fillStyle = "magenta";
     ctx.fillRect(ant.x * CELL_SIZE, ant.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
 
-  // Update the UI only ONCE per visual frame to save processing power
+ 
   btn.textContent = steps;
 
-  // Loop the animation frame
   animationId = requestAnimationFrame(sim);
 }
 
